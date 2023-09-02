@@ -1,0 +1,38 @@
+preferences:
+  autowire-on-sync-mode: UPDATE_OPTIONAL_DEPENDENCIES
+  repositories-mode: FAIL_ON_PROJECT_REPOS
+
+repositories:
+  gradle-plugin-portal:
+    scope: PLUGINS
+  google:
+  maven-central:
+  maven-local:
+
+plugins:
+  org.jetbrains.kotlin.jvm:
+    alias: kotlin-jvm
+    version: 1.9.10
+  org.jetbrains.kotlin.plugin.serialization:
+    alias: kotlin-serialization
+    version-ref: kotlin-jvm
+  com.vanniktech.maven.publish:
+    alias: maven-publish
+    version: 0.25.3
+
+libraries:
+  org.jetbrains.kotlin:
+    kotlin-gradle-plugin-api:
+      version: 1.9.10
+  org.snakeyaml:
+    snakeyaml-engine:
+      version: 2.7
+  com.charleskorn.kaml:
+    kaml:
+      version: 0.55.0
+  com.squareup.okhttp3:
+    okhttp:
+      version: 4.11.0
+  com.squareup:
+    javapoet:
+      version: 1.13.0

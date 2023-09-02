@@ -1,0 +1,3 @@
+package com.highcapable.sweetdependency.demo_library
+
+class DemoLibrary
