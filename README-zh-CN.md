@@ -1,7 +1,7 @@
 # Sweet Dependency
 
-![GitHub license](https://img.shields.io/github/license/HighCapable/SweetDependency?color=blue&cacheSeconds=https%3A%2F%2Fgithub.com%2FHighCapable%2FSweetDependency%2Fblob%2Fmaster%2FLICENSE)
-![GitHub release](https://img.shields.io/github/v/release/HighCapable/SweetDependency?display_name=release&logo=github&color=green&link=https%3A%2F%2Fgithub.com%2FHighCapable%2FSweetDependency%2Freleases%2Flatest)
+[![GitHub license](https://img.shields.io/github/license/HighCapable/SweetDependency?color=blue)](https://github.com/HighCapable/SweetDependency/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/HighCapable/SweetDependency?display_name=release&logo=github&color=green)](https://github.com/HighCapable/SweetDependency/releases)
 [![Telegram](https://img.shields.io/badge/discussion-Telegram-blue.svg?logo=telegram)](https://t.me/HighCapable_Dev)
 
 <img src="https://github.com/HighCapable/SweetDependency/blob/master/img-src/icon.png?raw=true" width = "100" height = "100" alt="LOGO"/>
