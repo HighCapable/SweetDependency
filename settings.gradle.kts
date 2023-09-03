@@ -9,7 +9,7 @@ pluginManagement {
 }
 plugins {
     id("com.highcapable.sweetdependency") version "1.0.0"
-    id("com.highcapable.sweetproperty") version "1.0.0"
+    id("com.highcapable.sweetproperty") version "1.0.1"
 }
 sweetDependency {
     isEnableVerboseMode = false
