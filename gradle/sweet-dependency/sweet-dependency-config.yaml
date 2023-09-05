@@ -36,3 +36,6 @@ libraries:
   com.squareup:
     javapoet:
       version: 1.13.0
+  net.lingala.zip4j:
+    zip4j:
+      version: 2.11.5

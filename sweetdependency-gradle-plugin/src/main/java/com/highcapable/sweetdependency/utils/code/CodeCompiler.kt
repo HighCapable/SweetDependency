@@ -25,11 +25,10 @@ import com.highcapable.sweetdependency.plugin.SweetDependencyExtension
 import com.highcapable.sweetdependency.utils.code.entity.MavenPomData
 import com.highcapable.sweetdependency.utils.debug.SError
 import com.highcapable.sweetdependency.utils.deleteEmptyRecursively
-import com.highcapable.sweetdependency.utils.parseFileSeparator
 import com.highcapable.sweetdependency.utils.toFile
+import net.lingala.zip4j.ZipFile
+import net.lingala.zip4j.model.ZipParameters
 import java.io.File
-import java.util.jar.JarEntry
-import java.util.jar.JarOutputStream
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
@@ -168,26 +167,8 @@ internal object CodeCompiler {
      */
     private fun packageToJar(buildDir: File, outputDir: File, pomData: MavenPomData, isSourcesJar: Boolean) {
         if (buildDir.exists().not()) SError.make("Jar file output path not found: ${buildDir.absolutePath}")
-        /**
-         * 添加文件到 JAR
-         * @param jos 当前输出流
-         * @param parentPath 父级路径
-         */
-        fun File.addToJar(jos: JarOutputStream, parentPath: String = "") {
-            val currentPath = "$parentPath$name".replace("${buildDir.name}|", "").replace("|", "/").parseFileSeparator()
-            if (isFile) {
-                if (name.startsWith(".")) return
-                jos.putNextEntry(JarEntry(currentPath))
-                inputStream().use { fis ->
-                    val buffer = ByteArray(4096)
-                    var bytesRead: Int
-                    while (fis.read(buffer).also { bytesRead = it } != -1) jos.write(buffer, 0, bytesRead)
-                }
-                jos.closeEntry()
-            } else listFiles()?.forEach { it.addToJar(jos, parentPath = "$currentPath|") }
-        }
         val jarFile = "${outputDir.absolutePath}/${pomData.artifactId}-${pomData.version}${if (isSourcesJar) "-sources" else ""}.jar".toFile()
         if (jarFile.exists()) jarFile.delete()
-        jarFile.outputStream().use { fos -> JarOutputStream(fos).use { jos -> buildDir.addToJar(jos) } }
+        ZipFile(jarFile).addFolder(buildDir, ZipParameters().apply { isIncludeRootFolder = false })
     }
 }

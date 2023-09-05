@@ -27,6 +27,7 @@ dependencies {
     implementation(com.charleskorn.kaml.kaml)
     implementation(com.squareup.okhttp3.okhttp)
     implementation(com.squareup.javapoet)
+    implementation(net.lingala.zip4j.zip4j)
 }
 
 gradlePlugin {
