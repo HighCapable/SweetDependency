@@ -81,6 +81,15 @@ Please replace `<version>` in the above code with the latest version in
 
 After the above configuration is complete, run Gradle Sync once.
 
+**Possible Problems**
+
+If running Gradle Sync fails with the error `Cannot have abstract method KotlinTarget. withSourcesJar()`,
+this may be a problem with the Kotlin plugin version of your current project.
+
+This problem is an error caused by upgrading the Kotlin plugin from `1.8.0+` → `1.9.0+`.
+
+The solution is to modify the version of the Kotlin plugin to `1.9.0+`.
+
 **Pay Attention**
 
 `SweetDependency` will replace the repositories set in `pluginManagement` and `dependencyResolutionManagement`,
