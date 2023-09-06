@@ -120,7 +120,7 @@ internal object DependencyDeployHelper {
      * @param rootProject 当前根项目
      */
     internal fun resolveAccessors(rootProject: Project) {
-        if (Dependencies.isOutdate || accessorsDir.isEmpty())
+        if (Dependencies.isOutdate || accessorsDir.resolve(accessorsPomData.relativePomPath).isEmpty())
             accessorsGenerator.build().compile(accessorsPomData, accessorsDir.absolutePath, accessorsGenerator.compileStubFiles)
         rootProject.addDependencyToBuildScript(accessorsDir.absolutePath, accessorsPomData)
     }
@@ -132,7 +132,14 @@ internal object DependencyDeployHelper {
      */
     internal fun deployAccessors(project: Project, extension: ExtensionAware) =
         accessorsGenerator.librariesClasses.forEach { (name, className) ->
-            extension.getOrCreate(name, project.loadBuildScriptClass(className))
+            val accessorsClass = project.loadBuildScriptClass(className) ?: SError.make(
+                """
+                  Generated class "$className" not found, stop loading $project
+                  Please check whether the initialization process is interrupted and re-run Gradle Sync
+                  If this doesn't work, please manually delete the entire "${accessorsDir.absolutePath}" directory
+                """.trimIndent()
+            )
+            extension.getOrCreate(name, accessorsClass)
         }
 
     /**

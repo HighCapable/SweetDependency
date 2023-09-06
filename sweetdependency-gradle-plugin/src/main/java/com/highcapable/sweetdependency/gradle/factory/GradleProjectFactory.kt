@@ -85,9 +85,9 @@ internal fun Project.addDependencyToBuildScript(repositoryPath: String, pomData:
 /**
  * 装载构建脚本的 [Class]
  * @param name [Class] 完整名称
- * @return [Class]
+ * @return [Class] or null
  */
-internal fun Project.loadBuildScriptClass(name: String) = buildscript.classLoader.loadClass(name)
+internal fun Project.loadBuildScriptClass(name: String) = runCatching { buildscript.classLoader.loadClass(name) }.getOrNull()
 
 /**
  * 获取指定项目部署的插件依赖数组 (实时)
