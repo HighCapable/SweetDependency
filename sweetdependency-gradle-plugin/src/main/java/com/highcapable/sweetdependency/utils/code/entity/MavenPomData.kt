@@ -27,4 +27,17 @@ package com.highcapable.sweetdependency.utils.code.entity
  * @param artifactId Artifact Id
  * @param version 版本
  */
-internal data class MavenPomData(internal val groupId: String, internal val artifactId: String, internal val version: String)
+internal data class MavenPomData(internal val groupId: String, internal val artifactId: String, internal val version: String) {
+
+    /**
+     * 获取 [MavenPomData] 相对路径
+     * @return [String]
+     */
+    internal val relativePomPath get() = "${groupId.toPomPathName()}/$artifactId/$version"
+
+    /**
+     * 转换到 [MavenPomData] 目录名称
+     * @return [String]
+     */
+    private fun String.toPomPathName() = trim().replace(".", "/").replace("_", "/").replace(":", "/").replace("-", "/")
+}
