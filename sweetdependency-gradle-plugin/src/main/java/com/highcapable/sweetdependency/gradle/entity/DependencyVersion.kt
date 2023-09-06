@@ -79,6 +79,24 @@ internal class DependencyVersion(internal var actual: String, optionalType: Opti
     }
 
     /**
+     * 获取固定存在的版本
+     *
+     * 满足以下情况
+     *
+     * - [isBlank]
+     * - [isNoSpecific]
+     *
+     * 这些情况都会返回 [AUTOWIRE_VERSION_NAME]
+     *
+     * 其余情况会返回 [current]
+     * @return [String]
+     */
+    internal val fixed get() = when {
+        isBlank || isNoSpecific -> AUTOWIRE_VERSION_NAME
+        else -> current
+    }
+
+    /**
      * 获取部署版本
      *
      * 如果为 [isNoSpecific] 则会返回空

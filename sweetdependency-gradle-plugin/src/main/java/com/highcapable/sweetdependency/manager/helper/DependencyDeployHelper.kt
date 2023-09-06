@@ -26,6 +26,7 @@ import com.highcapable.sweetdependency.environment.Environment
 import com.highcapable.sweetdependency.generated.SweetDependencyProperties
 import com.highcapable.sweetdependency.gradle.delegate.ProjectTransaction
 import com.highcapable.sweetdependency.gradle.delegate.entity.ExternalDependencyDelegate
+import com.highcapable.sweetdependency.gradle.entity.DependencyVersion
 import com.highcapable.sweetdependency.gradle.factory.addDependencyToBuildScript
 import com.highcapable.sweetdependency.gradle.factory.applyPlugin
 import com.highcapable.sweetdependency.gradle.factory.getOrCreate
@@ -79,6 +80,25 @@ internal object DependencyDeployHelper {
         runCatching {
             settings.dependencyResolutionManagement.versionCatalogs.create(pluginsNamespace) {
                 Dependencies.plugins().forEach { (dependencyName, artifact) ->
+                    if (GradleTaskManager.isInternalRunningTask && artifact.version().isAutowire) SError.make(
+                        """
+                          It looks like now you directly execute ${SweetDependency.TAG}'s autowiring related Gradle task
+                          Since this plugin "$dependencyName" that set "${DependencyVersion.AUTOWIRE_VERSION_NAME}" as the version,
+                          you now need to ensure that the version exists during the initialization phase
+                          The version catalogs rules require that a plugin version must be declared
+                          You can try the following solutions to resolve this problem:
+                          1. Manually re-run Gradle Sync
+                             Make sure "autowire-on-sync-mode" is one of:
+                             - UPDATE_OPTIONAL_DEPENDENCIES
+                             - UPDATE_OPTIONAL_PLUGINS
+                             - UPDATE_ALL_DEPENDENCIES
+                             - UPDATE_ALL_PLUGINS
+                             - ONLY_AUTOWIRE_DEPENDENCIES
+                             - ONLY_AUTOWIRE_PLUGINS
+                          2. Fill an existing version for plugin "$dependencyName" and re-run Gradle Sync
+                          If you get this error again after doing the above, maybe the currently set repositories cannot find this plugin
+                        """.trimIndent()
+                    )
                     if (artifact.version().isNoSpecific) return@forEach SLog.warn(
                         """
                           You must specific a version for plugin "$dependencyName" or use Gradle's internal plugin function instead it
@@ -98,13 +118,13 @@ internal object DependencyDeployHelper {
                         """.trimIndent()
                     )
                     val deployedName = dependencyName.ambiguousName(symbol = "-", isReplaceFirstChar = true, isLowerCase = false)
-                    plugin(deployedName, dependencyName.current).version(artifact.version().deployed)
+                    plugin(deployedName, dependencyName.current).version(artifact.version().fixed)
                     artifact.versions().forEach { (name, version) ->
-                        plugin("$deployedName-${name.camelcase()}", dependencyName.current).version(version.deployed)
+                        plugin("$deployedName-${name.camelcase()}", dependencyName.current).version(version.fixed)
                         if (artifact.alias.isNotBlank())
-                            plugin("${artifact.alias}-${name.camelcase()}", dependencyName.current).version(version.deployed)
+                            plugin("${artifact.alias}-${name.camelcase()}", dependencyName.current).version(version.fixed)
                     }
-                    if (artifact.alias.isNotBlank()) plugin(artifact.alias, dependencyName.current).version(artifact.version().deployed)
+                    if (artifact.alias.isNotBlank()) plugin(artifact.alias, dependencyName.current).version(artifact.version().fixed)
                 }
             }
         }.onFailure {
