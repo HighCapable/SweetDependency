@@ -24,6 +24,7 @@ package com.highcapable.sweetdependency.manager
 import com.highcapable.sweetdependency.document.PreferencesDocument
 import com.highcapable.sweetdependency.document.RepositoryDocument
 import com.highcapable.sweetdependency.exception.SweetDependencyUnresolvedException
+import com.highcapable.sweetdependency.gradle.helper.GradleHelper
 import com.highcapable.sweetdependency.manager.const.AdditionalRepositories
 import com.highcapable.sweetdependency.manager.content.Repositories
 import com.highcapable.sweetdependency.plugin.config.content.SweetDependencyConfigs
@@ -100,9 +101,17 @@ internal object RepositoryManager {
             fun List<String>.forEachParams(size: Int, result: (List<String>) -> Unit) = forEach {
                 result(it.split(":").also { e -> if (e.size != size) SError.make("Missing argument in content configuration") })
             }
+
+            /**
+             * 对旧版本不兼容的方法打印警告信息
+             * @param name 方法名称
+             */
+            fun warnIfNotSupport(name: String) = SLog.warn("Current Gradle ${GradleHelper.version} not support \"$name\"")
             document.content.exclude.also {
                 it.group().noEmpty()?.forEach { e -> excludeGroup(e) }
-                it.groupAndSubgroups().noEmpty()?.forEach { e -> excludeGroupAndSubgroups(e) }
+                runCatching {
+                    it.groupAndSubgroups().noEmpty()?.forEach { e -> excludeGroupAndSubgroups(e) }
+                }.onFailure { warnIfNotSupport(name = "excludeGroupAndSubgroups") }
                 it.groupByRegex().noEmpty()?.forEach { e -> excludeGroupByRegex(e) }
                 it.module().noEmpty()?.forEachParams(size = 2) { e -> excludeModule(e[0], e[1]) }
                 it.moduleByRegex().noEmpty()?.forEachParams(size = 2) { e -> excludeModuleByRegex(e[0], e[1]) }
@@ -111,7 +120,9 @@ internal object RepositoryManager {
             }
             document.content.include.also {
                 it.group().noEmpty()?.forEach { e -> includeGroup(e) }
-                it.groupAndSubgroups().noEmpty()?.forEach { e -> includeGroupAndSubgroups(e) }
+                runCatching {
+                    it.groupAndSubgroups().noEmpty()?.forEach { e -> includeGroupAndSubgroups(e) }
+                }.onFailure { warnIfNotSupport(name = "includeGroupAndSubgroups") }
                 it.groupByRegex().noEmpty()?.forEach { e -> includeGroupByRegex(e) }
                 it.module().noEmpty()?.forEachParams(size = 2) { e -> includeModule(e[0], e[1]) }
                 it.moduleByRegex().noEmpty()?.forEachParams(size = 2) { e -> includeModuleByRegex(e[0], e[1]) }
