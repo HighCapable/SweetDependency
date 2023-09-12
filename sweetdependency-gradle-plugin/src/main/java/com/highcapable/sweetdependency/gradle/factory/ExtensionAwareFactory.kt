@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is Created by fankes on 2023/5/27.
+ * This file is created by fankes on 2023/5/27.
  */
 @file:Suppress("unused", "USELESS_CAST", "KotlinRedundantDiagnosticSuppress")
 

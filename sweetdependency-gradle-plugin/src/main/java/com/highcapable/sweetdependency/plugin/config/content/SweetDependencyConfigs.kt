@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is Created by fankes on 2023/6/29.
+ * This file is created by fankes on 2023/6/29.
  */
 package com.highcapable.sweetdependency.plugin.config.content
 
