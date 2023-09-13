@@ -21,6 +21,7 @@
  */
 package com.highcapable.sweetdependency.utils.code
 
+import com.highcapable.sweetdependency.exception.SweetDependencyUnresolvedException
 import com.highcapable.sweetdependency.utils.code.entity.MavenPomData
 import com.highcapable.sweetdependency.utils.debug.SError
 import com.highcapable.sweetdependency.utils.deleteEmptyRecursively
@@ -155,7 +156,7 @@ internal object CodeCompiler {
      * @param outputDir 输出目录
      * @param pomData Maven POM 实体
      * @param isSourcesJar 是否为源码 JAR
-     * @throws IllegalStateException 如果编译输出目录不存在
+     * @throws SweetDependencyUnresolvedException 如果编译输出目录不存在
      */
     private fun packageToJar(buildDir: File, outputDir: File, pomData: MavenPomData, isSourcesJar: Boolean) {
         if (buildDir.exists().not()) SError.make("Jar file output path not found: ${buildDir.absolutePath}")
