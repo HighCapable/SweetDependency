@@ -1,5 +1,5 @@
 /*
- * SweetDependency - An easy autowire and manage dependencies Gradle plugin
+ * SweetDependency - An easy autowire and manage dependencies Gradle plugin.
  * Copyright (C) 2019-2023 HighCapable
  * https://github.com/HighCapable/SweetDependency
  *
