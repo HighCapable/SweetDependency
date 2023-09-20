@@ -2,7 +2,7 @@
 
 Before you start using it, it is recommended that you read this document carefully so that you can better understand how it works and its functions.
 
-You can find the demo in examples in the root directory of the project, and refer to this document for better use.
+You can find the demo in samples in the root directory of the project, and refer to this document for better use.
 
 ## Working Principle
 
