@@ -88,8 +88,14 @@ internal object RuntimeDebugTransaction {
                         "autowire-on-sync-mode" value preferences.autowireOnSyncMode,
                         "repositories-mode" value preferences.repositoriesMode,
                         "dependencies-namespace" to mapOf(
-                            "plugins" value preferences.dependenciesNamespace.plugins().ifBlank { NONE },
-                            "libraries" value preferences.dependenciesNamespace.libraries().ifBlank { NONE }
+                            "plugins" to mapOf(
+                                "enable" value preferences.dependenciesNamespace.plugins.isEnable,
+                                "name" value preferences.dependenciesNamespace.plugins.name().ifBlank { NONE }
+                            ),
+                            "libraries" to mapOf(
+                                "enable" value preferences.dependenciesNamespace.libraries.isEnable,
+                                "name" value preferences.dependenciesNamespace.libraries.name().ifBlank { NONE }
+                            )
                         ),
                         "version-filter" with (if (vfExclusionList.isEmpty()) "(disabled)" else "") to versionFilterMap
                     ),

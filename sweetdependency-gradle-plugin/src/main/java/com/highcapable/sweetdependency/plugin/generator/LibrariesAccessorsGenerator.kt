@@ -29,7 +29,6 @@ import com.highcapable.sweetdependency.generated.SweetDependencyProperties
 import com.highcapable.sweetdependency.gradle.delegate.entity.ExternalDependencyDelegate
 import com.highcapable.sweetdependency.gradle.entity.ExternalDependency
 import com.highcapable.sweetdependency.manager.content.Dependencies
-import com.highcapable.sweetdependency.plugin.config.content.SweetDependencyConfigs
 import com.highcapable.sweetdependency.plugin.extension.accessors.proxy.IExtensionAccessors
 import com.highcapable.sweetdependency.utils.camelcase
 import com.highcapable.sweetdependency.utils.capitalize
@@ -90,6 +89,9 @@ internal class LibrariesAccessorsGenerator {
 
     /** 生成的依赖库不重复 TAG 数组 */
     private val usedSuccessiveTags = mutableSetOf<String>()
+
+    /** 当前库依赖的命名空间 */
+    private var librariesNamespace = ""
 
     /**
      * 不重复调用
@@ -395,7 +397,7 @@ internal class LibrariesAccessorsGenerator {
     }
 
     /** 清空所有已生成的数据 */
-    private fun clearGeneratedData() {
+    internal fun clearGeneratedData() {
         classSpecs.clear()
         constructorSpecs.clear()
         preAddConstructorSpecNames.clear()
@@ -403,14 +405,17 @@ internal class LibrariesAccessorsGenerator {
         grandSuccessiveNames.clear()
         grandSuccessiveDuplicateIndexs.clear()
         usedSuccessiveTags.clear()
+        librariesNamespace = ""
     }
 
     /**
      * 生成 [JavaFile]
+     * @param namespace 依赖命名空间
      * @return [JavaFile]
      * @throws SweetDependencyUnresolvedException 如果生成失败
      */
-    internal fun build() = runCatching {
+    internal fun build(namespace: String) = runCatching {
+        librariesNamespace = namespace
         clearGeneratedData()
         createTopClassSpec()
         Dependencies.libraries().forEach { (dependencyName, artifact) ->
@@ -454,8 +459,7 @@ internal class LibrariesAccessorsGenerator {
      * @return [List]<[Pair]<[String], [String]>>
      */
     internal val librariesClasses get() =
-        SweetDependencyConfigs.document.preferences().dependenciesNamespace.libraries().let { namespace ->
-            if (namespace.isNotBlank()) listOf(namespace to createAccessorsName())
-            else memoryExtensionClasses
-        }
+        if (librariesNamespace.isNotBlank())
+            listOf(librariesNamespace to createAccessorsName())
+        else memoryExtensionClasses
 }

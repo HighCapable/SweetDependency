@@ -76,9 +76,9 @@ internal object DependencyDeployHelper {
      * @param settings 当前设置
      */
     internal fun generateVersionCatalogs(settings: Settings) {
-        val pluginsNamespace = SweetDependencyConfigs.document.preferences().dependenciesNamespace.plugins()
-        runCatching {
-            settings.dependencyResolutionManagement.versionCatalogs.create(pluginsNamespace) {
+        val pluginsOption = SweetDependencyConfigs.document.preferences().dependenciesNamespace.plugins
+        if (pluginsOption.isEnable) runCatching {
+            settings.dependencyResolutionManagement.versionCatalogs.create(pluginsOption.name()) {
                 Dependencies.plugins().forEach { (dependencyName, artifact) ->
                     if (GradleTaskManager.isInternalRunningTask && artifact.version().isAutowire) SError.make(
                         """
@@ -140,8 +140,14 @@ internal object DependencyDeployHelper {
      * @param rootProject 当前根项目
      */
     internal fun resolveAccessors(rootProject: Project) {
+        val librariesOption = SweetDependencyConfigs.document.preferences().dependenciesNamespace.libraries
+        if (librariesOption.isEnable.not()) {
+            accessorsPomData.relativePomPath.toFile().takeIf { it.exists() }?.deleteRecursively()
+            accessorsGenerator.clearGeneratedData()
+            return
+        }
         if (Dependencies.isOutdate || accessorsDir.resolve(accessorsPomData.relativePomPath).isEmpty())
-            accessorsGenerator.build().compile(accessorsPomData, accessorsDir.absolutePath, accessorsGenerator.compileStubFiles)
+            accessorsGenerator.build(librariesOption.name()).compile(accessorsPomData, accessorsDir.absolutePath, accessorsGenerator.compileStubFiles)
         rootProject.addDependencyToBuildScript(accessorsDir.absolutePath, accessorsPomData)
     }
 

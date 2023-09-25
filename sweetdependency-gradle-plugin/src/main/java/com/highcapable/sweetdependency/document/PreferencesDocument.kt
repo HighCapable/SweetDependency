@@ -48,30 +48,43 @@ internal data class PreferencesDocument(
     internal var versionFilter: VersionFilterDocument = VersionFilterDocument()
 ) : IYamlDocument {
 
+    /**
+     * 依赖命名空间文档实体
+     * @param plugins 插件依赖
+     * @param libraries 库依赖
+     */
     @Serializable
     internal data class DependenciesNamespaceDocument(
         @SerialName("plugins")
-        var plugins: String = "libs",
+        var plugins: NamespaceOptionDocument = NamespaceOptionDocument(name = "libs"),
         @SerialName("libraries")
-        var libraries: String = ""
+        var libraries: NamespaceOptionDocument = NamespaceOptionDocument()
     ) : IYamlDocument {
 
         init {
-            if (plugins.isNotBlank() && libraries.isNotBlank() && plugins == libraries)
+            if (plugins.name.isNotBlank() && libraries.name.isNotBlank() && plugins.name == libraries.name)
                 SError.make("Duplicated dependencies namespace \"$plugins\"")
         }
+    }
+
+    /**
+     * 命名空间选项文档实体
+     * @param isEnable 是否启用
+     * @param name 名称
+     */
+    @Serializable
+    internal data class NamespaceOptionDocument(
+        @SerialName("enable")
+        var isEnable: Boolean = true,
+        @SerialName("name")
+        var name: String = ""
+    ) : IYamlDocument {
 
         /**
-         * 获取插件依赖命名空间
+         * 获取名称
          * @return [String]
          */
-        internal fun plugins() = plugins.apply { checkingName("plugins namespace", isCheckExtName = true) }.camelcase()
-
-        /**
-         * 获取库依赖命名空间
-         * @return [String]
-         */
-        internal fun libraries() = libraries.apply { checkingName("libraries namespace", isCheckExtName = true) }.camelcase()
+        internal fun name() = name.apply { checkingName("dependencies namespace", isCheckExtName = true) }.camelcase()
     }
 
     /**
