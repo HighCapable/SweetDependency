@@ -76,14 +76,15 @@ internal object CodeCompiler {
             diagnosticsMessage += "    ${diagnostic.getMessage(null)}\n"
         }
         runCatching { fileManager.close() }
+        compileOnlyFiles.forEach { "${outputClassesDir.absolutePath}/${it.name}".replace(".java", ".class").toFile().delete() }
+        files.forEach {
+            it.toFiles(outputSourcesDir).also { (sourceDir, sourceFile) ->
+                sourceDir.mkdirs()
+                sourceFile.writeText(it.getCharContent(true).toString())
+            }
+        }
         if (result) {
-            compileOnlyFiles.forEach { "${outputClassesDir.absolutePath}/${it.name}".replace(".java", ".class").toFile().delete() }
-            files.forEach {
-                it.toFiles(outputSourcesDir).also { (sourceDir, sourceFile) ->
-                    sourceDir.mkdirs()
-                    sourceFile.writeText(it.getCharContent(true).toString())
-                }
-            }; outputClassesDir.deleteEmptyRecursively()
+            outputClassesDir.deleteEmptyRecursively()
             writeMetaInf(outputClassesDir)
             writeMetaInf(outputSourcesDir)
             createJarAndPom(pomData, outputDir, outputBuildDir, outputClassesDir, outputSourcesDir)
