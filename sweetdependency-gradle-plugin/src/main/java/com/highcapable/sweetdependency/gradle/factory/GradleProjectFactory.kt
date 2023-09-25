@@ -49,23 +49,23 @@ import org.gradle.plugin.use.PluginDependency
 
 /**
  * 获取指定项目的完整名称
+ * @param isUseColon 是否在子项目前使用冒号 - 默认是
  * @return [String]
  */
-internal val Project.fullName
-    get(): String {
-        val baseNames = mutableListOf<String>()
+internal fun Project.fullName(isUseColon: Boolean = true): String {
+    val isRoot = this == rootProject
+    val baseNames = mutableListOf<String>()
 
-        /**
-         * 递归子项目
-         * @param project 当前项目
-         */
-        fun fetchChild(project: Project) {
-            project.parent?.also { if (it != it.rootProject) fetchChild(it) }
-            baseNames.add(project.name)
-        }
-        fetchChild(project = this)
-        return buildString { baseNames.onEach { append(":$it") }.clear() }.drop(1)
-    }
+    /**
+     * 递归子项目
+     * @param project 当前项目
+     */
+    fun fetchChild(project: Project) {
+        project.parent?.also { if (it != it.rootProject) fetchChild(it) }
+        baseNames.add(project.name)
+    }; fetchChild(project = this)
+    return buildString { baseNames.onEach { append(":$it") }.clear() }.let { if (isUseColon && isRoot.not()) it else it.drop(1) }
+}
 
 /**
  * 向构建脚本添加自定义依赖

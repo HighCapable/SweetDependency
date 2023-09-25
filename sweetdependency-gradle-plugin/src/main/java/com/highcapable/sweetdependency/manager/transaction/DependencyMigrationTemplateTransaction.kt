@@ -75,13 +75,14 @@ internal object DependencyMigrationTemplateTransaction {
     internal fun createTemplate() {
         SLog.info("Starting analyze projects dependencies structure", SLog.ANLZE)
         GradleHelper.allProjects.forEach { subProject ->
+            val projectName = subProject.fullName()
             subProject.plugins().onEach {
                 if (exclusionPluginPrefixs.any { prefix -> it.id.startsWith(prefix) }) return@onEach
                 if (Dependencies.hasPlugin { key, _ -> key.current == it.id }) return@onEach
                 if (document.plugins == null) document.plugins = mutableMapOf()
                 val declareDocument = DependencyDocument(version = DependencyVersion.AUTOWIRE_VERSION_NAME)
                 document.plugins?.set(it.id, declareDocument)
-            }.apply { if (isNotEmpty()) SLog.info("Found $size plugins in project \"${subProject.fullName}\"", SLog.LINK) }
+            }.apply { if (isNotEmpty()) SLog.info("Found $size plugins in project \"$projectName\"", SLog.LINK) }
             subProject.libraries().onEach {
                 if (Dependencies.hasLibrary { key, _ -> key.current == it.toString() }) return@onEach
                 if (document.libraries == null) document.libraries = mutableMapOf()
@@ -90,7 +91,7 @@ internal object DependencyMigrationTemplateTransaction {
                     val declareDocument = DependencyDocument(version = it.version.existed)
                     entities[it.groupId]?.set(it.artifactId, declareDocument)
                 }
-            }.apply { if (isNotEmpty()) SLog.info("Found $size libraries in project \"${subProject.fullName}\"", SLog.LINK) }
+            }.apply { if (isNotEmpty()) SLog.info("Found $size libraries in project \"$projectName\"", SLog.LINK) }
         }; saveTemplateFile()
     }
 

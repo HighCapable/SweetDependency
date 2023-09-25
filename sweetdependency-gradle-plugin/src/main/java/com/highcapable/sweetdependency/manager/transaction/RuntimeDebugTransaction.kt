@@ -152,24 +152,24 @@ internal object RuntimeDebugTransaction {
         if (vfExclusionList.isNotEmpty()) versionFilterMap["exclusionList"] = mutableMapOf<String, Any>()
         vfExclusionList.forEach { versionFilterMap["exclusionList"]?.addAsMap(it) }
         GradleHelper.allProjects.forEach { subProject ->
-            projectPluginsMap[subProject.fullName] = mutableMapOf<String, Any>()
-            projectLibrariesMap[subProject.fullName] = mutableMapOf<String, Any>()
-            subProject.plugins().forEach { projectPluginsMap[subProject.fullName]?.addAsMap(it.id) }
+            projectPluginsMap[subProject.fullName()] = mutableMapOf<String, Any>()
+            projectLibrariesMap[subProject.fullName()] = mutableMapOf<String, Any>()
+            subProject.plugins().forEach { projectPluginsMap[subProject.fullName()]?.addAsMap(it.id) }
             subProject.libraries().forEach {
                 val prefix = "(${it.configurationName})"
                 when (it.type) {
                     LibraryDependencyType.EXTERNAL, LibraryDependencyType.EXTERNAL_DELEGATE -> {
                         val suffix = it.version.deployed.noBlank()?.let { e -> ":$e" } ?: ""
-                        projectLibrariesMap[subProject.fullName]?.addAsMap("$prefix ${it.groupId}:${it.artifactId}$suffix")
+                        projectLibrariesMap[subProject.fullName()]?.addAsMap("$prefix ${it.groupId}:${it.artifactId}$suffix")
                     }
-                    LibraryDependencyType.PROJECT -> projectLibrariesMap[subProject.fullName]?.addAsMap("$prefix (project) ${it.project?.fullName}")
+                    LibraryDependencyType.PROJECT -> projectLibrariesMap[subProject.fullName()]?.addAsMap("$prefix (project) ${it.project?.fullName()}")
                     LibraryDependencyType.FILES -> {
                         val filesMap = mutableMapOf<String, String>()
                         it.files?.noEmpty()?.forEach { e -> filesMap.addAsMap(e.absolutePath) }?.also {
-                            projectLibrariesMap[subProject.fullName] = mapOf("$prefix (files)" to filesMap)
-                        } ?: projectLibrariesMap[subProject.fullName]?.addAsMap("$prefix (files) not found or empty folder")
+                            projectLibrariesMap[subProject.fullName()] = mapOf("$prefix (files)" to filesMap)
+                        } ?: projectLibrariesMap[subProject.fullName()]?.addAsMap("$prefix (files) not found or empty folder")
                     }
-                    LibraryDependencyType.OTHERS -> projectLibrariesMap[subProject.fullName]?.addAsMap("$prefix unknown type dependency")
+                    LibraryDependencyType.OTHERS -> projectLibrariesMap[subProject.fullName()]?.addAsMap("$prefix unknown type dependency")
                 }
             }
         }
