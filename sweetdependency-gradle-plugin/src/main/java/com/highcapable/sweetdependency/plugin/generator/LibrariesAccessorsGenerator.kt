@@ -73,6 +73,9 @@ internal class LibrariesAccessorsGenerator {
     /** 生成的依赖库构造方法构建器数组 */
     private val constructorSpecs = mutableMapOf<String, MethodSpec.Builder>()
 
+    /** 生成的依赖库预添加的构造方法 (父方法) 数组 */
+    private val preAddConstructorSpecSupers = mutableListOf<Pair<String, ExternalDependency>>()
+
     /** 生成的依赖库预添加的构造方法名称数组 */
     private val preAddConstructorSpecNames = mutableListOf<Pair<String, String>>()
 
@@ -239,13 +242,20 @@ internal class LibrariesAccessorsGenerator {
         addStatement("${className.uncapitalized()} = new ${className.capitalized()}()")
 
     /**
+     * 向通用构造方法构建器描述类添加依赖描述器 (父方法)
+     * @param dependency 外部存储库依赖实体
+     * @return [MethodSpec.Builder]
+     */
+    private fun MethodSpec.Builder.addLibrarySuper(dependency: ExternalDependency) =
+        addStatement("super(\"${dependency.groupId}\", \"${dependency.artifactId}\", \"${dependency.version.deployed}\")")
+
+    /**
      * 向通用构造方法构建器描述类添加依赖描述器
      * @param dependency 外部存储库依赖实体
      * @param artifact 依赖文档实体
      * @return [MethodSpec.Builder]
      */
     private fun MethodSpec.Builder.addLibraryStatement(dependency: ExternalDependency, artifact: DependencyDocument) = apply {
-        addStatement("super(\"${dependency.groupId}\", \"${dependency.artifactId}\", \"${dependency.version.deployed}\")")
         artifact.versions().forEach { (alias, version) ->
             addStatement(
                 "${alias.camelcase()} = new ${ExternalDependencyDelegate::class.java.simpleName}" +
@@ -271,11 +281,22 @@ internal class LibrariesAccessorsGenerator {
     private fun getOrCreateConstructorSpec(name: String) = constructorSpecs[name] ?: createConstructorSpec().also { constructorSpecs[name] = it }
 
     /**
+     * 追加到通用构造方法构建器描述类
+     * @param name 名称
+     * @param statement 回调 [MethodSpec.Builder]
+     */
+    private inline fun appendToConstructorSpec(name: String, statement: MethodSpec.Builder.() -> Unit) {
+        val codeBlock = getOrCreateConstructorSpec(name)?.build()?.code
+        if (constructorSpecs.contains(name)) constructorSpecs.remove(name)
+        getOrCreateConstructorSpec(name)?.apply(statement)?.addCode(codeBlock)
+    }
+
+    /**
      * 解析并生成所有类的构建器 (核心方法)
      *
      * 解析开始前需要确保已调用 [createTopClassSpec] 并调用一次 [clearGeneratedData] 防止数据混淆
      *
-     * 解析完成后需要调用 [releaseParseTypeSpec] 完成解析
+     * 解析完成后需要调用 [releaseParseTypeSpecNames] 完成解析
      * @param successiveName 连续的名称
      * @param dependency 外部存储库依赖实体
      * @param artifact 依赖文档实体
@@ -324,6 +345,7 @@ internal class LibrariesAccessorsGenerator {
             if (index == successiveNames.lastIndex) {
                 getOrCreateClassSpec(className, dependency)?.addLibraryClass(dependency, artifact)
                 getOrCreateConstructorSpec(className)?.addLibraryStatement(dependency, artifact)
+                preAddConstructorSpecSupers.add(className to dependency)
             } else {
                 if (index == 0) noRepeated(TOP_SUCCESSIVE_NAME, methodName, className) {
                     getOrCreateClassSpec(TOP_SUCCESSIVE_NAME, accessorsName)
@@ -343,10 +365,16 @@ internal class LibrariesAccessorsGenerator {
         }
     }
 
-    /** 完成生成所有类的构建器 (释放) */
-    private fun releaseParseTypeSpec() =
+    /** 完成生成所有类的构建器 (构造方法名称) (释放) */
+    private fun releaseParseTypeSpecNames() =
         preAddConstructorSpecNames.onEach { (topClassName, innerClassName) ->
             getOrCreateConstructorSpec(topClassName)?.addSuccessiveStatement(innerClassName)
+        }.clear()
+
+    /** 完成生成所有类的构建器 (构造方法的父方法) (释放) */
+    private fun releaseParseTypeSpecSupers() =
+        preAddConstructorSpecSupers.onEach { (className, dependency) ->
+            appendToConstructorSpec(className) { addLibrarySuper(dependency) }
         }.clear()
 
     /**
@@ -389,8 +417,8 @@ internal class LibrariesAccessorsGenerator {
             val dependency = ExternalDependency(dependencyName, artifact.version())
             parseTypeSpec(dependencyName.current, dependency, artifact)
             if (artifact.alias.isNotBlank()) parseTypeSpec(artifact.alias, dependency, artifact)
-            releaseParseTypeSpec()
-        }; buildTypeSpec().createJavaFile(ACCESSORS_PACKAGE_NAME)
+            releaseParseTypeSpecNames()
+        }; releaseParseTypeSpecSupers(); buildTypeSpec().createJavaFile(ACCESSORS_PACKAGE_NAME)
     }.getOrElse { SError.make("Failed to generated accessors classes, please checking your config file", it) }
 
     /**
