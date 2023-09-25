@@ -191,7 +191,7 @@ internal object DependencyDeployHelper {
     }
 
     /**
-     * 处理自动装配的依赖
+     * 处理自动装配的库依赖
      * @param project 当前项目 - 默认为 [ProjectTransaction.current]
      * @param params 当前参数数组
      * @return [Any]
