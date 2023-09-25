@@ -26,40 +26,53 @@ import com.highcapable.sweetdependency.generated.SweetDependencyProperties
 import com.highcapable.sweetdependency.gradle.helper.GradleHelper
 import com.highcapable.sweetdependency.utils.debug.SLog
 import com.highcapable.sweetdependency.utils.executeUrlBody
+import org.xml.sax.InputSource
+import java.io.StringReader
+import javax.xml.parsers.DocumentBuilderFactory
 
 /**
  * 插件自身检查更新工具类
  */
 internal object PluginUpdateHelper {
 
-    private const val REPO_NAME = SweetDependencyProperties.PROJECT_NAME
-    private const val AUTHOR_NAME = SweetDependencyProperties.PROJECT_DEVELOPER_NAME
+    /** OSS Release URL 地址 */
+    private const val SONATYPE_OSS_RELEASES_URL = "https://s01.oss.sonatype.org/content/repositories/releases"
+
+    /** 依赖配置文件名 */
+    private const val METADATA_FILE_NAME = "maven-metadata.xml"
+
+    /** 插件自身依赖 URL 名称 */
+    private val groupUrlNotation =
+        "${SweetDependencyProperties.PROJECT_GROUP_NAME.replace(".","/")}/${SweetDependencyProperties.GRADLE_PLUGIN_MODULE_NAME}"
 
     /** 检查更新 URL 地址 */
-    private const val RELEASE_URL = "https://github.com/$AUTHOR_NAME/$REPO_NAME"
+    private val releaseUrl = "$SONATYPE_OSS_RELEASES_URL/$groupUrlNotation/$METADATA_FILE_NAME"
 
     /** 检查更新 */
     internal fun checkingForUpdate() {
         if (GradleHelper.isOfflineMode) return
-        val latestVersion = RELEASE_URL.executeUrlBody(isShowFailure = false).findVersionName()
-        if (latestVersion.isNotBlank() && latestVersion != SweetDependency.VERSION)
-            SLog.note(
-                """
-                  Plugin update is available, the current version is ${SweetDependency.VERSION}, please update to $latestVersion
-                  You can modify your plugin version in your project's settings.gradle / settings.gradle.kts
-                  plugins {
-                      id("${SweetDependencyProperties.PROJECT_GROUP_NAME}") version "$latestVersion"
-                      ...
-                  }
-                  For more information, you can visit ${SweetDependency.PROJECT_URL}
-                """.trimIndent(), SLog.UP
-            )
+        val latestVersion = releaseUrl.executeUrlBody(isShowFailure = false).trim().findLatest()
+        if (latestVersion.isNotBlank() && latestVersion != SweetDependency.VERSION) SLog.note(
+            """
+              Plugin update is available, the current version is ${SweetDependency.VERSION}, please update to $latestVersion
+              You can modify your plugin version in your project's settings.gradle / settings.gradle.kts
+              plugins {
+                  id("${SweetDependencyProperties.PROJECT_GROUP_NAME}") version "$latestVersion"
+                  ...
+              }
+              For more information, you can visit ${SweetDependency.PROJECT_URL}
+            """.trimIndent(), SLog.UP
+        )
     }
 
     /**
-     * 解析 JSON 并查找字符串版本 "name"
+     * 解析 [METADATA_FILE_NAME] 内容并获取 "latest"
      * @return [String]
      */
-    private fun String.findVersionName() =
-        runCatching { trim().split("href=\"/$AUTHOR_NAME/$REPO_NAME/releases/tag/")[1].split("\"")[0] }.getOrNull() ?: ""
+    private fun String.findLatest() = runCatching {
+        if ((contains("<metadata ") || contains("<metadata>")).not() || endsWith("</metadata>").not()) return@runCatching ""
+        DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(InputSource(StringReader(this))).let { document ->
+            document.getElementsByTagName("latest")?.let { if (it.length > 0) it.item(0)?.textContent ?: "" else "" }
+        }
+    }.getOrNull() ?: ""
 }
