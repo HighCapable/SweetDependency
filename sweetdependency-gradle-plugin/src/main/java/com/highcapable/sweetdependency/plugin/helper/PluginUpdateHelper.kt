@@ -55,7 +55,7 @@ internal object PluginUpdateHelper {
         if (latestVersion.isNotBlank() && latestVersion != SweetDependency.VERSION) SLog.note(
             """
               Plugin update is available, the current version is ${SweetDependency.VERSION}, please update to $latestVersion
-              You can modify your plugin version in your project's settings.gradle / settings.gradle.kts
+              You can modify your plugin version in your project's settings.gradle or settings.gradle.kts
               plugins {
                   id("${SweetDependencyProperties.PROJECT_GROUP_NAME}") version "$latestVersion"
                   ...

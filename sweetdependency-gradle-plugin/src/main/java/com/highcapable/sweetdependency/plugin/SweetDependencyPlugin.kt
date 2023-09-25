@@ -37,6 +37,6 @@ class SweetDependencyPlugin<T : ExtensionAware> internal constructor() : Plugin<
 
     override fun apply(target: T) = when (target) {
         is Settings -> GradleDelegate.create<SweetDependencyExtension>(target)
-        else -> SError.make("${SweetDependency.TAG} can only applied in settings.gradle/settings.gradle.kts, but current is $target")
+        else -> SError.make("${SweetDependency.TAG} can only applied in settings.gradle or settings.gradle.kts, but current is $target")
     }
 }
