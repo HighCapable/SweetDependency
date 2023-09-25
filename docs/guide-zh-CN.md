@@ -157,11 +157,19 @@ preferences:
   # 没有命名空间：implementation(com.mydemo.test.test)
   # 存在命名空间：implementation(libs.com.mydemo.test.test)
   dependencies-namespace:
-    # 插件依赖必须存在命名空间，如果不设置，其默认为 "libs"
-    plugins: libs
-    # 库依赖的命名空间可选
-    # 如果你不需要库依赖的命名空间，请删除此节点
-    libraries: libs
+    plugins:
+      # 如果你希望关闭自动生成，可以设置为 false
+      # 在决定关闭时请确保构建脚本中已不存在自动生成的代码，防止发生错误
+      enable: true
+      # 插件依赖必须存在命名空间，如果不设置，其默认为 "libs"
+      name: libs
+    libraries:
+      # 如果你希望关闭自动生成，可以设置为 false
+      # 在决定关闭时请确保构建脚本中已不存在自动生成的代码，防止发生错误
+      enable: true
+      # 库依赖的命名空间可选
+      # 如果你不需要库依赖的命名空间，请删除此节点
+      name: libs
   # 依赖版本过滤器
   # 如果你需要排除一些不希望被更新到的依赖版本 (例如测试版本) 可以手动进行配置
   # 默认情况下过滤器已帮你自动排除测试版本，无需对此项进行配置

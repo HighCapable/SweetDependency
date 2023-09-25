@@ -166,11 +166,21 @@ preferences:
   # No namespace: implementation(com.mydemo.test.test)
   # Has namespace: implementation(libs.com.mydemo.test.test)
   dependencies-namespace:
-    # Plugin dependencies namespace must exist, if not set, the default is "libs"
-    plugins: libs
-    # Library dependencies namespace is optional
-    # If you don't need the namespace of library dependencies, delete this node
+    plugins:
+      # If you want to turn off automatic generation, you can set it to false
+      # Note: When deciding to close,
+      # make sure that there is no automatically generated code in the build script to prevent errors
+      enable: true
+      # Plugin dependencies namespace must exist, if not set, the default is "libs"
+      name: libs
     libraries: libs
+      # If you want to turn off automatic generation, you can set it to false
+      # Note: When deciding to close,
+      # make sure that there is no automatically generated code in the build script to prevent errors
+      enable: true
+      # Library dependencies namespace is optional
+      # If you don't need the namespace of library dependencies, delete this node
+      name: libs
   # Dependencies version filter
   # If you need to exclude some dependency versions that you don't want to be updated to (such as test versions),
   # you can configure them manually
