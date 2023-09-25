@@ -29,7 +29,6 @@ import com.highcapable.sweetdependency.document.factory.RepositoryList
 import com.highcapable.sweetdependency.document.factory.checkingName
 import com.highcapable.sweetdependency.document.factory.convertToDependencyAmbiguousName
 import com.highcapable.sweetdependency.gradle.entity.DependencyName
-import com.highcapable.sweetdependency.gradle.entity.DependencyVersion
 import com.highcapable.sweetdependency.utils.capitalize
 import com.highcapable.sweetdependency.utils.debug.SError
 import com.highcapable.sweetdependency.utils.findDuplicates
@@ -141,26 +140,33 @@ internal data class RootConfigDocument(
      * @param duplicate 允许重复 - 忽略处理后版本重复的异常 - 默认否
      * @return [DependencyMap]
      */
-    internal fun plugins(duplicate: Boolean = false) = createPlugins().resolveDependencies(typeName = "plugin", duplicate)
+    internal fun plugins(duplicate: Boolean = false) = resolveDependencies(typeName = "plugin", duplicate)
 
     /**
      * 获取当前库依赖数组
      * @param duplicate 允许重复 - 忽略处理后版本重复的异常 - 默认否
      * @return [DependencyMap]
      */
-    internal fun libraries(duplicate: Boolean = false) = createLibraries().resolveDependencies(typeName = "library", duplicate)
+    internal fun libraries(duplicate: Boolean = false) = resolveDependencies(typeName = "library", duplicate)
 
     /**
      * 处理依赖数组
      * @param typeName 依赖类型名称
      * @param duplicate 允许重复 - 忽略处理后版本重复的异常 - 默认否
+     * @return [DependencyMap]
      */
-    private fun DependencyMap.resolveDependencies(typeName: String, duplicate: Boolean = false) = apply {
+    private fun resolveDependencies(typeName: String, duplicate: Boolean = false): DependencyMap {
+        val plugins = createPlugins()
+        val libraries = createLibraries()
+        val currentDependencies = when (typeName) {
+            "plugin" -> plugins
+            "library" -> libraries
+            else -> SError.make("Unknown dependency type \"$typeName\"")
+        }
         val firstTypeName = typeName.capitalize()
         val checkDuplicateAlias = mutableMapOf<String, String>()
-        val refLibraries = mutableListOf<Triple<DependencyName, String, DependencyVersion>>()
         val ambiguousNames = mutableListOf<String>()
-        eachDependencies { dependencyName, artifact ->
+        currentDependencies.eachDependencies { dependencyName, artifact ->
             artifact.alias.checkingName("$typeName \"$dependencyName\" alias", isCheckMultiName = true)
             artifact.versions().forEach { (name, _) -> name.checkingName("$typeName \"$dependencyName\" version alias") }
             if (artifact.alias.isNotBlank())
@@ -177,27 +183,46 @@ internal data class RootConfigDocument(
                 )
             if (artifact.versionRef.isNotBlank() && artifact.versionRef.startsWith("<this>::"))
                 artifact.versionRef = artifact.versionRef.replace("<this>:", dependencyName.groupId)
-            refLibraries.add(Triple(dependencyName, artifact.alias, artifact.version()))
         }
-        eachDependencies { dependencyName, artifact ->
+        currentDependencies.eachDependencies { dependencyName, artifact ->
             /** 处理版本引用 */
             fun resolveVersionRef() {
-                refLibraries.firstOrNull { artifact.versionRef.let { e -> e == it.first.current || e == it.second } }?.also {
-                    if (dependencyName == it.first || dependencyName.current == it.second)
+                var scopeName = typeName
+                val versionRef = artifact.versionRef.replace("<plugins>::", "").replace("<libraries>::", "")
+                when {
+                    artifact.versionRef.startsWith("<plugins>::") -> {
+                        scopeName = "plugins"
+                        plugins
+                    }
+                    artifact.versionRef.startsWith("<libraries>::") -> {
+                        scopeName = "libraries"
+                        libraries
+                    }
+                    else -> {
+                        scopeName = when (typeName) {
+                            "plugin" -> "plugins"
+                            "library" -> "libraries"
+                            else -> "unknown"
+                        }; currentDependencies
+                    }
+                }.filter { (dependencyName, artifact) ->
+                    versionRef.let { it == dependencyName.current || it == artifact.alias }
+                }.entries.firstOrNull()?.also { (resolveDependencyName, resolveArtifact) ->
+                    if (dependencyName == resolveDependencyName || dependencyName.current == resolveArtifact.alias)
                         SError.make("$firstTypeName \"$dependencyName\" declared \"version-ref\" from itself (recursive call found)")
                     when {
-                        it.third.isNoSpecific -> SError.make(
-                            "$firstTypeName \"${it.first}\" does not specify a version, so it can no longer be " +
+                        resolveArtifact.version().isNoSpecific -> SError.make(
+                            "$firstTypeName \"$resolveDependencyName\" does not specify a version, so it can no longer be " +
                                 "declared as \"version-ref\" by $typeName \"$dependencyName\""
                         )
-                        it.third.isBlank -> SError.make(
-                            "$firstTypeName \"${it.first}\" already has \"version-ref\" declared, so it can no longer" +
+                        resolveArtifact.version().isBlank -> SError.make(
+                            "$firstTypeName \"$resolveDependencyName\" already has \"version-ref\" declared, so it can no longer" +
                                 " be declared as \"version-ref\" by $typeName \"$dependencyName\" (recursive call found)"
                         )
-                    }; artifact.updateVersion(it.third)
+                    }; artifact.updateVersion(resolveArtifact.version())
                 } ?: SError.make(
-                    "Could not found any versions or dependencies associated with " +
-                        "version-ref \"${artifact.versionRef}\" of $typeName \"$dependencyName\""
+                    "Could not found any versions or $scopeName associated with " +
+                        "version-ref \"$versionRef\" of $typeName \"$dependencyName\""
                 )
             }
             if (artifact.version().isNoSpecific) return@eachDependencies
@@ -208,16 +233,17 @@ internal data class RootConfigDocument(
             else if (artifact.version().isBlank.not() && artifact.versionRef.isNotBlank() && duplicate.not())
                 SError.make("$firstTypeName \"$dependencyName\" can only have one \"version\" or \"version-ref\" node, please delete one")
         }
-        eachDependencies { dependencyName, artifact ->
+        currentDependencies.eachDependencies { dependencyName, artifact ->
             ambiguousNames.add(dependencyName.ambiguousName())
             if (artifact.alias.isNotBlank()) {
                 artifact.alias.checkingName("$typeName \"$dependencyName\" alias", isCheckMultiName = true)
                 ambiguousNames.add(artifact.alias.convertToDependencyAmbiguousName())
-            }; this[dependencyName] = artifact
+            }; currentDependencies[dependencyName] = artifact
         }
         if (ambiguousNames.hasDuplicate()) ambiguousNames.findDuplicates().forEach {
             SError.make("Found ambiguous name \"$it\" in declared dependencies, please checking your $typeName aliases that your declared")
         } else ambiguousNames.clear()
+        return currentDependencies
     }
 
     /**
