@@ -346,6 +346,9 @@ plugins:
   org.jetbrains.kotlin.android:
     alias: kotlin-android
     version: 1.8.10
+  com.google.devtools.ksp:
+    alias: kotlin-ksp
+    version: 1.8.10-1.0.9
 
 # 配置需要使用的库依赖
 libraries:
@@ -389,6 +392,12 @@ libraries:
       # 注意：如果你声明了 "version-ref"，此依赖将在自动装配和更新中被排除
       # 注意：如果你声明了 "version-ref"，"auto-update"、"repositories"、"version-filter" 将无效
       version-ref: <this>::core # 或 "androidx.core:core" 以及 "androidx-core" (别名)
+  com.google.devtools.ksp:
+    symbol-processing-api:
+      # 如果你想引用一个不属于当前作用域 ("libraries") 的依赖或别名，你需要声明其所属的作用域
+      # 例如引用 "plugins" 作用域中的依赖别名 "kotlin-ksp"，你需要使用 "<plugins>::" 作为开头进行声明
+      # 同理，在 "plugins" 作用域中需要使用 "<libraries>::" 作为开头进行声明
+      version-ref: <plugins>::kotlin-ksp # 或 "<plugins>::com.google.devtools.ksp"
   com.squareup.okhttp3:
     okhttp:
       # 如果你在版本中声明了一个 "version-filter" 中存在的版本 (内置过滤器或排除列表)

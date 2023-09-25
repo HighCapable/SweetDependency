@@ -368,6 +368,9 @@ plugins:
   org.jetbrains.kotlin.android:
     alias: kotlin-android
     version: 1.8.10
+  com.google.devtools.ksp:
+    alias: kotlin-ksp
+    version: 1.8.10-1.0.9
 
 # Configure libraries that need to be used
 libraries:
@@ -416,6 +419,14 @@ libraries:
       # Note: If you declare "version-ref", this dependency will be excluded from autowiring and updating
       # Note: If you declare "version-ref", "auto-update", "repositories", "version-filter" will not work
       version-ref: <this>::core # Or "androidx.core:core" and "androidx-core" (alias)
+  com.google.devtools.ksp:
+    symbol-processing-api:
+      # If you want to reference a dependency or alias that does not belong to the current scope ("libraries"),
+      # you need to declare the scope it belongs to
+      # For example, to reference the dependency alias "kotlin-ksp" in the "plugins" scope,
+      # you need to use "<plugins>::" as the beginning of the declaration
+      # Similarly, you need to use "<libraries>::" as the beginning of the declaration in the "plugins" scope
+      version-ref: <plugins>::kotlin-ksp # Or "<plugins>::com.google.devtools.ksp"
   com.squareup.okhttp3:
     okhttp:
       # If you declare a version in the version that exists in "version-filter" (internal filter or exclude list)
