@@ -47,10 +47,10 @@ internal object GradleDelegate {
         callOnSettingsLoaded(settings)
         settings.gradle.settingsEvaluated { callOnSettingsEvaluate(settings = this) }
         settings.gradle.projectsLoaded {
-            callOnProjectLoaded(rootProject, isRoot = true)
+            rootProject.beforeEvaluate { callOnProjectLoaded(project = this, isRoot = true) }
             rootProject.afterEvaluate { callOnProjectEvaluate(project = this, isRoot = true) }
             rootProject.subprojects.forEach {
-                callOnProjectLoaded(it, isRoot = false)
+                it.beforeEvaluate { callOnProjectLoaded(project = this, isRoot = false) }
                 it.afterEvaluate { callOnProjectEvaluate(project = this, isRoot = false) }
             }
         }
