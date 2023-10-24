@@ -10,6 +10,11 @@
 
 [English](https://github.com/HighCapable/SweetDependency/blob/master/README.md) | 简体中文
 
+| <img src="https://github.com/HighCapable/.github/blob/main/img-src/logo.jpg?raw=true" width = "30" height = "30" alt="LOGO"/> | [HighCapable](https://github.com/HighCapable) |
+|-------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+
+这个项目属于上述组织，**点击上方链接关注这个组织**，发现更多好项目。
+
 ## 这是什么
 
 这是一个用来管理 Gradle 依赖的 Gradle 插件，所有依赖集中管理并自动更新，解决了每个子项目都需要手动更新到相同版本依赖的问题。
