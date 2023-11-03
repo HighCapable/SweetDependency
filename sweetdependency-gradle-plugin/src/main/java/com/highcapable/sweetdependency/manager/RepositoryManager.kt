@@ -90,7 +90,7 @@ internal object RepositoryManager {
         document.nodeName.noBlank()?.also { docName -> this.name = docName }
         if (this is AuthenticationSupported && document.credentials.let { it.username.isNotBlank() || it.password.isNotBlank() })
             credentials { this.username = document.credentials.username; this.password = document.credentials.password }
-        if (document.content.isEmpty().not()) content {
+        if (!document.content.isEmpty()) content {
             /**
              * 使用 ":" 分割字符串
              * @param size 期望的个数

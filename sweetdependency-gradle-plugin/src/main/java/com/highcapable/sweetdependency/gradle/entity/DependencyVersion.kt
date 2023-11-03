@@ -54,7 +54,7 @@ internal class DependencyVersion(internal var actual: String, optionalType: Opti
         if (current.startsWith("<") && current.endsWith(">"))
             if (current != NO_SPECIFIC_VERSION_NAME && current != LATEST_VERSION_NAME)
                 SError.make("The parameter \"$current\" is not recognized as any available function")
-        if (isOptional.not()) when (optionalType) {
+        if (!isOptional) when (optionalType) {
             OptionalUpdateType.NONE -> {}
             OptionalUpdateType.NORMAL -> actual = "$OPTIONAL_VERSION_NORMAL_PREFIX$actual"
             OptionalUpdateType.PERMANENT -> actual = "$OPTIONAL_VERSION_PERMANENT_PREFIX$actual"
@@ -102,7 +102,7 @@ internal class DependencyVersion(internal var actual: String, optionalType: Opti
      * 如果为 [isNoSpecific] 则会返回空
      * @return [String]
      */
-    internal val deployed get() = current.takeIf { isNoSpecific.not() } ?: ""
+    internal val deployed get() = current.takeIf { !isNoSpecific } ?: ""
 
     /**
      * 获取存在版本

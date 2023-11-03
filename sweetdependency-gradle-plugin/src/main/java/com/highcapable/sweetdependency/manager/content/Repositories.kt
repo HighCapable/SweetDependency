@@ -59,7 +59,7 @@ internal object Repositories {
      * 当前是否不存在存储库
      * @return [Boolean]
      */
-    internal fun isNotEmpty() = isEmpty().not()
+    internal fun isNotEmpty() = !isEmpty()
 
     /**
      * 生成存储库数组

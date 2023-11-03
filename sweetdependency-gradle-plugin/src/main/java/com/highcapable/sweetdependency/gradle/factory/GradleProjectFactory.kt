@@ -64,7 +64,7 @@ internal fun Project.fullName(isUseColon: Boolean = true): String {
         project.parent?.also { if (it != it.rootProject) fetchChild(it) }
         baseNames.add(project.name)
     }; fetchChild(project = this)
-    return buildString { baseNames.onEach { append(":$it") }.clear() }.let { if (isUseColon && isRoot.not()) it else it.drop(1) }
+    return buildString { baseNames.onEach { append(":$it") }.clear() }.let { if (isUseColon && !isRoot) it else it.drop(1) }
 }
 
 /**
@@ -115,7 +115,7 @@ internal fun Project.libraries(isUseCache: Boolean = true) =
          * @return [Boolean]
          */
         fun Dependency.checkingValid() = when (this) {
-            is ExternalDependency -> group.isNullOrBlank().not() && name.isNullOrBlank().not()
+            is ExternalDependency -> !group.isNullOrBlank() && !name.isNullOrBlank()
             is FileCollectionDependency -> runCatching { files.files.isNotEmpty() }.getOrNull() ?: false
             else -> true
         }
@@ -186,5 +186,5 @@ internal fun PluginDependenciesSpec.applyPlugin(alias: Any) = when (alias) {
 private fun PluginManager.findPluginId(plugin: Plugin<*>) = runCatching {
     @Suppress("UNCHECKED_CAST")
     val pluginIds = (this as PluginManagerInternal).findPluginIdForClass(GeneratedSubclasses.unpackType(plugin) as Class<Plugin<*>>)
-    if (pluginIds.isEmpty.not()) pluginIds.get() else null
+    if (!pluginIds.isEmpty) pluginIds.get() else null
 }.getOrNull()?.id ?: ""

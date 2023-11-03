@@ -63,7 +63,7 @@ internal class SweetDependencyExtensionImpl : BaseExtensionImpl() {
                 """.trimIndent(), noTag = true
             )
         }
-        if (GradleHelper.version.let { it.startsWith("7.") || it.startsWith("8.") }.not()) SError.make(
+        if (GradleHelper.version.let { it.startsWith("7.") || !it.startsWith("8.") }) SError.make(
             "${SweetDependency.TAG} ${SweetDependency.VERSION} " +
                 "does not support Gradle ${GradleHelper.version}, please update Gradle or plugin version"
         )
@@ -91,7 +91,7 @@ internal class SweetDependencyExtensionImpl : BaseExtensionImpl() {
      */
     private fun configureProject(configs: ISweetDependencyConfigs) {
         SLog.isVerboseMode = configs.isEnableVerboseMode
-        if (isPluginLoaded.not() || GradleHelper.isSyncMode.not()) SLog.verbose(SweetDependency.bannerContent, noTag = true)
+        if (!isPluginLoaded || !GradleHelper.isSyncMode) SLog.verbose(SweetDependency.bannerContent, noTag = true)
         if (isPluginLoaded) return
         isPluginLoaded = true
         SLog.verbose("Welcome to ${SweetDependency.TAG} ${SweetDependency.VERSION}! Using Gradle ${GradleHelper.version}")

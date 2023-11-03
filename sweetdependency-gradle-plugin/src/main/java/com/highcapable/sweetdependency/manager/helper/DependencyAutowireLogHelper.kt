@@ -50,7 +50,7 @@ internal object DependencyAutowireLogHelper {
      * @param toVersion 最终版本
      */
     internal fun record(dependencyName: DependencyName, fromVersion: DependencyVersion, toVersion: DependencyVersion) {
-        if (SweetDependencyConfigs.configs.isEnableDependenciesAutowireLog.not()) return
+        if (!SweetDependencyConfigs.configs.isEnableDependenciesAutowireLog) return
         val versionInfo = if (fromVersion.isAutowire)
             "autowire version \"$toVersion\""
         else "update version \"$fromVersion\" -> \"$toVersion\""

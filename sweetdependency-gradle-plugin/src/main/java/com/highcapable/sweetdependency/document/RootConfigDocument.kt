@@ -170,7 +170,7 @@ internal data class RootConfigDocument(
             artifact.alias.checkingName("$typeName \"$dependencyName\" alias", isCheckMultiName = true)
             artifact.versions().forEach { (name, _) -> name.checkingName("$typeName \"$dependencyName\" version alias") }
             if (artifact.alias.isNotBlank())
-                if (checkDuplicateAlias.contains(artifact.alias).not())
+                if (!checkDuplicateAlias.contains(artifact.alias))
                     checkDuplicateAlias[artifact.alias] = dependencyName.current
                 else SError.make(
                     "Duplicated alias \"${artifact.alias}\", " +
@@ -230,7 +230,7 @@ internal data class RootConfigDocument(
                 if (artifact.versionRef.isNotBlank())
                     versions()[artifact.versionRef]?.also { artifact.version = it } ?: resolveVersionRef()
                 else SError.make("Missing declared version when configuring $typeName \"$dependencyName\"")
-            else if (artifact.version().isBlank.not() && artifact.versionRef.isNotBlank() && duplicate.not())
+            else if (!artifact.version().isBlank && artifact.versionRef.isNotBlank() && !duplicate)
                 SError.make("$firstTypeName \"$dependencyName\" can only have one \"version\" or \"version-ref\" node, please delete one")
         }
         currentDependencies.eachDependencies { dependencyName, artifact ->

@@ -267,7 +267,7 @@ internal data class RepositoryDocument(
         }; nodeName = name
         if (url.isNotBlank() && path.isNotBlank()) SError.make("There can only be one \"url\" and \"path\" parameter of \"$name\"")
         if (path.isNotBlank() && (path.startsWith("https://") || path.startsWith("http://"))) SError.make("Invalid repository path: $path")
-        if (url.isNotBlank() && url.startsWith("https://").not() && url.startsWith("http://").not()) SError.make("Invalid repository URL: $url")
+        if (url.isNotBlank() && !url.startsWith("https://") && !url.startsWith("http://")) SError.make("Invalid repository URL: $url")
         if (path.isNotBlank()) path = path.parseUnixFileSeparator()
     }
 }

@@ -100,7 +100,7 @@ internal class LibrariesAccessorsGenerator {
      */
     private inline fun noRepeated(vararg tags: String, block: () -> Unit) {
         val allTag = tags.joinToString("-")
-        if (usedSuccessiveTags.contains(allTag).not()) block()
+        if (!usedSuccessiveTags.contains(allTag)) block()
         usedSuccessiveTags.add(allTag)
     }
 

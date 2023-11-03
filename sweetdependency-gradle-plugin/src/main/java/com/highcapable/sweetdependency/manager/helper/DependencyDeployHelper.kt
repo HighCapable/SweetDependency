@@ -141,7 +141,7 @@ internal object DependencyDeployHelper {
      */
     internal fun resolveAccessors(rootProject: Project) {
         val librariesOption = SweetDependencyConfigs.document.preferences().dependenciesNamespace.libraries
-        if (librariesOption.isEnable.not()) {
+        if (!librariesOption.isEnable) {
             accessorsPomData.relativePomPath.toFile().takeIf { it.exists() }?.deleteRecursively()
             accessorsGenerator.clearGeneratedData()
             return
@@ -198,7 +198,7 @@ internal object DependencyDeployHelper {
      */
     internal fun resolveAutowire(project: Project = ProjectTransaction.current, params: Array<out String>): Any {
         if (params.isEmpty()) SError.make("The autowire function need a param to resolve library")
-        return if (params[0].let { it.contains("/").not() && it.contains("\\").not() && it.startsWith("(").not() && it.endsWith(")").not() }) {
+        return if (params[0].let { !it.contains("/") && !it.contains("\\") && !it.startsWith("(") && !it.endsWith(")") }) {
             if (params.size > 2) SError.make("The autowire function currently does not support more than 2 params of external dependency")
             val entry = Dependencies.findLibraries { key, value -> params[0] == key.current || params[0] == value.alias }.single()
                 ?: SError.make("Failed to resolve library \"${params[0]}\", also tried alias")
@@ -210,7 +210,7 @@ internal object DependencyDeployHelper {
             params.forEach { param ->
                 val relativePath = if (param.startsWith("(") && param.endsWith(")")) param.replace("(", "").replace(")", "") else param
                 it.addAll(relativePath.toAbsoluteFilePaths(project.projectDir.absolutePath).onEach { path ->
-                    if (path.toFile().isValidZip().not()) SError.make(
+                    if (!path.toFile().isValidZip()) SError.make(
                         """
                           Invalid library at file path $path
                           The file collection dependency needs to be a valid zip package

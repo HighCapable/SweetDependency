@@ -60,7 +60,7 @@ internal object CodeCompiler {
         if (files.isEmpty()) {
             if (outputDir.exists()) outputDir.deleteRecursively()
             return
-        } else outputDir.also { if (it.exists().not()) it.mkdirs() }
+        } else outputDir.also { if (!it.exists()) it.mkdirs() }
         val outputBuildDir = "$outputDirPath/build".toFile().also { if (it.exists()) it.deleteRecursively(); it.mkdirs() }
         val outputClassesDir = "${outputBuildDir.absolutePath}/classes".toFile().apply { mkdirs() }
         val outputSourcesDir = "${outputBuildDir.absolutePath}/sources".toFile().apply { mkdirs() }
@@ -100,7 +100,7 @@ internal object CodeCompiler {
      * @param sourcesDir 编译源码目录
      */
     private fun createJarAndPom(pomData: MavenPomData, outputDir: File, buildDir: File, classesDir: File, sourcesDir: File) {
-        val pomDir = outputDir.resolve(pomData.relativePomPath).also { if (it.exists().not()) it.mkdirs() }
+        val pomDir = outputDir.resolve(pomData.relativePomPath).also { if (!it.exists()) it.mkdirs() }
         packageToJar(classesDir, pomDir, pomData, isSourcesJar = false)
         packageToJar(sourcesDir, pomDir, pomData, isSourcesJar = true)
         writePom(pomDir, pomData)
@@ -160,7 +160,7 @@ internal object CodeCompiler {
      * @throws SweetDependencyUnresolvedException 如果编译输出目录不存在
      */
     private fun packageToJar(buildDir: File, outputDir: File, pomData: MavenPomData, isSourcesJar: Boolean) {
-        if (buildDir.exists().not()) SError.make("Jar file output path not found: ${buildDir.absolutePath}")
+        if (!buildDir.exists()) SError.make("Jar file output path not found: ${buildDir.absolutePath}")
         val jarFile = outputDir.resolve("${pomData.artifactId}-${pomData.version}${if (isSourcesJar) "-sources" else ""}.jar")
         if (jarFile.exists()) jarFile.delete()
         ZipFile(jarFile).addFolder(buildDir, ZipParameters().apply { isIncludeRootFolder = false })

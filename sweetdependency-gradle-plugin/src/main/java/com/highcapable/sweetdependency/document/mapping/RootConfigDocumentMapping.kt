@@ -158,12 +158,12 @@ internal class RootConfigDocumentMapping internal constructor(private val config
                 }
             }
         pluginsContents.onEachIndexed { index, content ->
-            if ((content.trim().startsWith(VERSION_NODE_CONTENT) && content.startsWith(SPACE_OF_4)).not()) return@onEachIndexed
+            if (!(content.trim().startsWith(VERSION_NODE_CONTENT) && content.startsWith(SPACE_OF_4))) return@onEachIndexed
             pluginsMapping[pluginsLine].versionLine = index + pluginsStartLine
             pluginsLine++
         }.clear()
         librariesContents.onEachIndexed { index, content ->
-            if ((content.trim().startsWith(VERSION_NODE_CONTENT) && content.startsWith(SPACE_OF_6)).not()) return@onEachIndexed
+            if (!(content.trim().startsWith(VERSION_NODE_CONTENT) && content.startsWith(SPACE_OF_6))) return@onEachIndexed
             librariesMapping[librariesLine].versionLine = index + librariesStartLine
             librariesLine++
         }.clear()

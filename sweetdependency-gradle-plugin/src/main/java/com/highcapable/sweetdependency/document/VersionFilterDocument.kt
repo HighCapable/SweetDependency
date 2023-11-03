@@ -64,7 +64,7 @@ internal data class VersionFilterDocument(
          * 当前是否不存在排除列表
          * @return [Boolean]
          */
-        internal fun isNotEmpty() = isEmpty().not()
+        internal fun isNotEmpty() = !isEmpty()
 
         /**
          * 依赖于当前 [version] 提供的版本并在 [all] 中排除 (不区分大小写)
@@ -74,7 +74,7 @@ internal data class VersionFilterDocument(
          * @return [ExclusionList]
          */
         internal fun depends(version: DependencyVersion) = clone().apply {
-            if (version.isAutowire.not() && version.isBlank.not()) all().removeAll { version.deployed.lowercase().contains(it.lowercase()) }
+            if (!version.isAutowire && !version.isBlank) all().removeAll { version.deployed.lowercase().contains(it.lowercase()) }
         }
 
         /**

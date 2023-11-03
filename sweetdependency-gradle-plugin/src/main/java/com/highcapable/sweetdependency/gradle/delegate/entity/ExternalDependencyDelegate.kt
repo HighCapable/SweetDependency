@@ -51,7 +51,7 @@ internal open class ExternalDependencyDelegate internal constructor(
 
     override fun getVersion(): String {
         val notation = spliceToDependencyNotation(groupId, artifactId)
-        if (version == DependencyVersion.AUTOWIRE_VERSION_NAME && GradleTaskManager.isInternalRunningTask.not()) SError.make(
+        if (version == DependencyVersion.AUTOWIRE_VERSION_NAME && !GradleTaskManager.isInternalRunningTask) SError.make(
             """
               This library "$notation" is not autowired and cannot be deployed
               You can try the following solutions to resolve this problem:

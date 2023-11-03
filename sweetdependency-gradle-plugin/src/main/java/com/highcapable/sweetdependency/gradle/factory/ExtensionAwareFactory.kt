@@ -38,7 +38,7 @@ import org.gradle.api.plugins.ExtensionAware
  */
 internal fun ExtensionAware.getOrCreate(name: String, clazz: Class<*>, vararg args: Any?) = name.toSafeExtName().let { sName ->
     runCatching { extensions.create(sName, clazz, *args).asExtension() }.getOrElse {
-        if ((it is IllegalArgumentException && it.message?.startsWith("Cannot add extension with name") == true).not()) throw it
+        if (!(it is IllegalArgumentException && it.message?.startsWith("Cannot add extension with name") == true)) throw it
         runCatching { extensions.getByName(sName).asExtension() }.getOrNull() ?: SError.make("Create or get extension failed with name \"$sName\"")
     }
 }
@@ -51,7 +51,7 @@ internal fun ExtensionAware.getOrCreate(name: String, clazz: Class<*>, vararg ar
  */
 internal inline fun <reified T> ExtensionAware.getOrCreate(name: String, vararg args: Any?) = name.toSafeExtName().let { sName ->
     runCatching { extensions.create(sName, T::class.java, *args) as T }.getOrElse {
-        if ((it is IllegalArgumentException && it.message?.startsWith("Cannot add extension with name") == true).not()) throw it
+        if (!(it is IllegalArgumentException && it.message?.startsWith("Cannot add extension with name") == true)) throw it
         runCatching { extensions.getByName(sName) as? T? }.getOrNull() ?: SError.make("Create or get extension failed with name \"$sName\"")
     }
 }

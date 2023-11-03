@@ -85,7 +85,7 @@ internal object Dependencies {
      * 当前是否不存在依赖
      * @return [Boolean]
      */
-    internal fun isNotEmpty() = isEmpty().not()
+    internal fun isNotEmpty() = !isEmpty()
 
     /**
      * 查找是否存在指定的依赖

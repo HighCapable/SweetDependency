@@ -97,7 +97,7 @@ internal object DependencyManager {
          * @param isGroovyOnly 是否仅为 Groovy 创建 - 默认是
          */
         fun Project.deployAutowire(extension: ExtensionAware, isGroovyOnly: Boolean = true) {
-            if (isGroovyOnly.not() || (isGroovyOnly && buildFile.name.endsWith(".gradle")))
+            if (!isGroovyOnly || buildFile.name.endsWith(".gradle"))
                 extension.getOrCreate<SweetDependencyAutowireExtension>(SweetDependencyAutowireExtension.NAME, this)
         }
 
@@ -162,7 +162,7 @@ internal object DependencyManager {
         var updLbrariesCount = 0
         val needUpdateDependencies = mutableMapOf<String, Pair<DependencyName, DependencyVersion>>()
         findByType { _, artifact ->
-            artifact.version().isNoSpecific.not() && (artifact.versionRef.isBlank() &&
+            !artifact.version().isNoSpecific && (artifact.versionRef.isBlank() &&
                 ((updateMode.updateType == DependencyUpdateMode.UpdateType.UPDATE_ALL ||
                     (updateMode.updateType == DependencyUpdateMode.UpdateType.UPDATE_OPTIONAL &&
                         (artifact.version().isOptional || artifact.version().isAutowire)) ||
@@ -213,7 +213,7 @@ internal object DependencyManager {
             if (SweetDependencyConfigs.configs.isEnableDependenciesAutowireLog)
                 logIfNeeded(msg = "Autowiring logs have been automatically written to: ${DependencyAutowireLogHelper.logFile}", SLog.LINK)
             SweetDependencyConfigs.documentMapping.updateDependencies(needUpdateDependencies)
-            if (isRunningOnSync.not()) SLog.warn(
+            if (!isRunningOnSync) SLog.warn(
                 """
                   **************************** NOTICE ****************************
                    ${needUpdateDependencies.size} dependencies (plugins: $updPluginsCount, libraries: $updLbrariesCount) has been changed
@@ -316,9 +316,9 @@ internal object DependencyManager {
         isAutoUpdate: Boolean,
         result: (newVersion: DependencyVersion) -> Unit
     ) = when {
-        currentVersion.isAutowire.not() && versions.contains(currentVersion).not() ->
+        !currentVersion.isAutowire && !versions.contains(currentVersion) ->
             SLog.warn("$positionTagName > MISSING ${dependencyName.description} version $currentVersion, available are $versions")
-        currentVersion.isAutowire.not() && alternateVersions.isNotEmpty() && alternateVersions.all { versions.contains(it) }.not() ->
+        !currentVersion.isAutowire && alternateVersions.isNotEmpty() && !alternateVersions.all { versions.contains(it) } ->
             SLog.warn("$positionTagName > MISSING ${dependencyName.description} version alias $alternateVersions, available are $versions")
         latestVersion != currentVersion -> when {
             currentVersion.isAutowire -> {

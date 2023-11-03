@@ -56,7 +56,7 @@ internal fun String.parseUnixFileSeparator() = replace("\\", "/")
  */
 internal fun String.toRelativeFilePath(basePath: String, rootPath: String = "") =
     parseFileSeparator().runCatching {
-        if (rootPath.isNotBlank() && contains(rootPath).not()) return this
+        if (rootPath.isNotBlank() && !contains(rootPath)) return this
         return Paths.get(basePath).relativize(Paths.get(this)).toString()
     }.getOrNull() ?: parseFileSeparator()
 
@@ -107,8 +107,8 @@ internal fun String.toAbsoluteFilePaths(basePath: String) =
  * @return [Boolean]
  */
 internal fun File.isValidZip(): Boolean {
-    if (isFile.not()) return true
-    if (exists().not()) return false
+    if (!isFile) return true
+    if (!exists()) return false
     return runCatching { ZipFile(this).use {}; true }.getOrNull() ?: false
 }
 
@@ -119,7 +119,7 @@ internal fun File.isValidZip(): Boolean {
  * - 如果文件不存在 - 返回 true
  * @return [Boolean]
  */
-internal fun File.isEmpty() = exists().not() || isDirectory.not() || listFiles().isNullOrEmpty()
+internal fun File.isEmpty() = !exists() || !isDirectory || listFiles().isNullOrEmpty()
 
 /** 删除目录下的空子目录 */
 internal fun File.deleteEmptyRecursively() {

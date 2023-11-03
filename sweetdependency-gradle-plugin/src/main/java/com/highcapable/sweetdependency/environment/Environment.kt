@@ -42,13 +42,13 @@ internal object Environment {
      * 获取 [SweetDependency] 缓存存放目录
      * @return [File]
      */
-    private val memoryDir get() = "${GradleHelper.rootDir.absolutePath}/$MEMORY_DIR_PATH".toFile().also { if (it.exists().not()) it.mkdirs() }
+    private val memoryDir get() = "${GradleHelper.rootDir.absolutePath}/$MEMORY_DIR_PATH".toFile().also { if (!it.exists()) it.mkdirs() }
 
     /**
      * 获取 [SweetDependency] 功能存放目录
      * @return [File]
      */
-    private val resourcesDir get() = "${GradleHelper.rootDir.absolutePath}/$RESOURCES_DIR_PATH".toFile().also { if (it.exists().not()) it.mkdirs() }
+    private val resourcesDir get() = "${GradleHelper.rootDir.absolutePath}/$RESOURCES_DIR_PATH".toFile().also { if (!it.exists()) it.mkdirs() }
 
     /**
      * 获取系统信息

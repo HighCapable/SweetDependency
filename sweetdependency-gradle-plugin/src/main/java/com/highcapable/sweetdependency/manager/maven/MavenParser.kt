@@ -70,7 +70,7 @@ internal object MavenParser {
      * @return [MavenMetadata]
      */
     private fun String.toMetadata(currentVersion: DependencyVersion) = runCatching {
-        if ((contains("<metadata ") || contains("<metadata>")).not() || endsWith("</metadata>").not()) return@runCatching MavenMetadata()
+        if (!(contains("<metadata ") || contains("<metadata>")) || !endsWith("</metadata>")) return@runCatching MavenMetadata()
         DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(InputSource(StringReader(this))).let { document ->
             val lastUpdated = document.getElementsByTagName("lastUpdated").item(0)?.textContent?.toLongOrNull() ?: 0L
             val versionNodeList = document.getElementsByTagName("version")

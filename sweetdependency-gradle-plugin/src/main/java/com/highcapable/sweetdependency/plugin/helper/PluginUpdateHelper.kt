@@ -70,7 +70,7 @@ internal object PluginUpdateHelper {
      * @return [String]
      */
     private fun String.findLatest() = runCatching {
-        if ((contains("<metadata ") || contains("<metadata>")).not() || endsWith("</metadata>").not()) return@runCatching ""
+        if (!(contains("<metadata ") || contains("<metadata>")) || !endsWith("</metadata>")) return@runCatching ""
         DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(InputSource(StringReader(this))).let { document ->
             document.getElementsByTagName("latest")?.let { if (it.length > 0) it.item(0)?.textContent ?: "" else "" }
         }

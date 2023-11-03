@@ -42,7 +42,7 @@ internal fun ISweetDependencyConfigs.build() = configFilePath.loadOrCreateEmpty(
  */
 private fun String.loadOrCreateEmpty(): RootConfigDocument {
     toFile().apply {
-        if (name.endsWith(".yaml").not() && name.endsWith(".yml").not())
+        if (!name.endsWith(".yaml") && !name.endsWith(".yml"))
             SError.make("Config file name must be end with \".yaml\" or \".yml\"")
     }.createTemplateFileOrNot()
     return Yaml.loadFromFile<RootConfigDocument>(path = this)
@@ -56,11 +56,11 @@ private fun File.createTemplateFileOrNot() {
     }
     runCatching {
         when {
-            exists().not() && parentFile.exists().not() -> {
+            !exists() && !parentFile.exists() -> {
                 parentFile.mkdirs()
                 createTemplateFile()
             }
-            exists().not() -> createTemplateFile()
+            !exists() -> createTemplateFile()
             exists() && isDirectory -> SError.make("Tries to create file path is a directory")
         }
     }.onFailure { SError.make("Could not automatically created config file: $absolutePath", it) }
