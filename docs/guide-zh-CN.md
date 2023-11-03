@@ -80,12 +80,6 @@ plugins {
 
 上述配置完成后，运行一次 Gradle Sync。
 
-**可能遇到的问题**
-
-如果在运行 Gradle Sync 后失败并报错 `Cannot have abstract method KotlinTarget. withSourcesJar()`，这可能是你当前项目的 Kotlin 插件版本的问题。
-
-此问题为 Kotlin 插件从 `1.8.0+` → `1.9.0+` 升级导致的错误，解决方案为将 Kotlin 插件的版本修改为 `1.9.0+`。
-
 **特别注意**
 
 `SweetDependency` 会替换 `pluginManagement` 和 `dependencyResolutionManagement` 中设置的存储库，如果你手动在这些方法块中配置了存储库，它们都将会无效。
@@ -815,14 +809,16 @@ dependencies {
 
 在 Kotlin Multiplatform 中与一般依赖部署方式一致。
 
+为了解决可能的插件冲突，无论是 Kotlin 还是 Groovy，都需要使用 `sweet.autowire`。
+
 > Kotlin DSL
 
 ```kotlin
 sourceSets {
     val androidMain by getting {
         dependencies {
-            implementation(autowire("androidx.core:core-ktx"))
-            implementation(autowire("libs/*.jar"))
+            implementation(sweet.autowire("androidx.core:core-ktx"))
+            implementation(sweet.autowire("libs/*.jar"))
         }
     }
 }
