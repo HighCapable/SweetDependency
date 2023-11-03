@@ -21,9 +21,6 @@ plugins:
     version: 0.25.3
 
 libraries:
-  org.jetbrains.kotlin:
-    kotlin-gradle-plugin-api:
-      version: 1.9.10
   org.snakeyaml:
     snakeyaml-engine:
       version: 2.7

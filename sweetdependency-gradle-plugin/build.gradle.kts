@@ -22,7 +22,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(org.jetbrains.kotlin.kotlin.gradle.plugin.api)
     implementation(org.snakeyaml.snakeyaml.engine)
     implementation(com.charleskorn.kaml.kaml)
     implementation(com.squareup.okhttp3.okhttp)

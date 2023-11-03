@@ -92,11 +92,12 @@ internal object DependencyManager {
      */
     internal fun deploy(rootProject: Project) {
         /**
-         * 为 Groovy 创建扩展方法
+         * 为自动装配创建扩展方法
          * @param extension 当前扩展实例
+         * @param isGroovyOnly 是否仅为 Groovy 创建 - 默认是
          */
-        fun Project.deployForGroovy(extension: ExtensionAware) {
-            if (buildFile.name.endsWith(".gradle"))
+        fun Project.deployAutowire(extension: ExtensionAware, isGroovyOnly: Boolean = true) {
+            if (isGroovyOnly.not() || (isGroovyOnly && buildFile.name.endsWith(".gradle")))
                 extension.getOrCreate<SweetDependencyAutowireExtension>(SweetDependencyAutowireExtension.NAME, this)
         }
 
@@ -110,14 +111,14 @@ internal object DependencyManager {
         fun Project.deployForKotlinMultiplatform() =
             waitForPluginAdded("org.jetbrains.kotlin.multiplatform") {
                 get("kotlin").also { extension ->
-                    deployForGroovy(extension)
+                    deployAutowire(extension, isGroovyOnly = false)
                     deployEach(extension)
                 }
             }
 
         /** 部署到当前项目 */
         fun Project.deploy() {
-            deployForGroovy(dependencies)
+            deployAutowire(dependencies)
             deployEach(dependencies)
             deployForKotlinMultiplatform()
         }

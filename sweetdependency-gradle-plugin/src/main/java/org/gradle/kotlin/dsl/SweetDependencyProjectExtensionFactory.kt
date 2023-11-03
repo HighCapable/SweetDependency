@@ -27,7 +27,6 @@ import com.highcapable.sweetdependency.manager.helper.DependencyDeployHelper
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 /**
  * 自动装配插件依赖
@@ -42,10 +41,3 @@ fun PluginDependenciesSpec.autowire(vararg params: Any) = DependencyDeployHelper
  * @return [Any]
  */
 fun DependencyHandler.autowire(vararg params: String) = DependencyDeployHelper.resolveAutowire(params = params)
-
-/**
- * 自动装配依赖
- * @param params 参数数组
- * @return [Any]
- */
-fun KotlinDependencyHandler.autowire(vararg params: String) = DependencyDeployHelper.resolveAutowire(project, params)
