@@ -44,6 +44,7 @@ import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.TypeSpec
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.annotation.Nonnull
 import javax.lang.model.element.Modifier
 
 /**
@@ -205,6 +206,7 @@ internal class LibrariesAccessorsGenerator {
                         else -> "\"$accessors\" accessors"
                     }; addJavadoc("Resolve the $actual")
                 }.addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addAnnotation(Nonnull::class.java)
                 .returns(className.capitalized().asClassType())
                 .addStatement("return ${className.uncapitalized()}")
                 .build()
@@ -228,6 +230,7 @@ internal class LibrariesAccessorsGenerator {
                 MethodSpec.methodBuilder("get${alias.uppercamelcase()}")
                     .addJavadoc("Resolve the \"$dependency\" version alias \"$alias\"")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addAnnotation(Nonnull::class.java)
                     .returns(ExternalDependencyDelegate::class.java)
                     .addStatement("return ${alias.camelcase()}")
                     .build()
@@ -432,6 +435,10 @@ internal class LibrariesAccessorsGenerator {
      */
     internal val compileStubFiles get(): List<JavaFile> {
         val stubFiles = mutableListOf<JavaFile>()
+        val nonnullFile =
+            TypeSpec.annotationBuilder(Nonnull::class.java.simpleName)
+                .addModifiers(Modifier.PUBLIC)
+                .build().createJavaFile(Nonnull::class.java.packageName)
         val iExtensionAccessorsFile =
             TypeSpec.interfaceBuilder(IExtensionAccessors::class.java.simpleName)
                 .addModifiers(Modifier.PUBLIC)
@@ -447,6 +454,7 @@ internal class LibrariesAccessorsGenerator {
                         .addParameter(String::class.java, "version")
                         .build()
                 ).build().createJavaFile(ExternalDependencyDelegate::class.java.packageName)
+        stubFiles.add(nonnullFile)
         stubFiles.add(iExtensionAccessorsFile)
         stubFiles.add(externalDependencyDelegateFile)
         return stubFiles
