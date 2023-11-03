@@ -23,3 +23,10 @@
 - Added dependencies namespace to enable or disable the generation function, after the update, you need to refer to the documentation to migrate the
   node names of some configuration files yourself, otherwise errors will occur
 - Added the function of using `<plugins>::` or `<libraries>::` to access the dependencies name and alias of other nodes and set them to `version-ref`
+
+## 1.0.3 | 2023.11.04
+
+- Fix a `Class` conflict between this plugin and the `Kotlin` plugin starting from `1.0.0` version
+- Change the configuration dependency `autowire(...)` in Kotlin Multiplatform to `sweet.autowire(...)`
+- Generated code is marked with `@Nonnull` to make it recognized as a non-null return type in Kotlin DSL scripts
+- Some other functional improvements
