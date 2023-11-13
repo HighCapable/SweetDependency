@@ -103,6 +103,7 @@ internal object RuntimeDebugTransaction {
                     "plugins" to pluginsMap,
                     "libraries" to librariesMap
                 ),
+                "isUseDependencyResolutionManagement" value configs.isUseDependencyResolutionManagement,
                 "isEnableDependenciesAutowireLog" value configs.isEnableDependenciesAutowireLog,
                 "isEnableVerboseMode" value configs.isEnableVerboseMode
             ),
