@@ -1149,6 +1149,10 @@ sweetDependency {
     // 启用 SweetDependency，设置为 false 将禁用所有功能
     isEnable = true
 
+    // 是否启用调试模式
+    // 默认不启用，启用后将在自动装配时输出详细的依赖搜索信息
+    isDebug = false
+
     // SweetDependency 配置文件名称
     configFileName = "sweet-dependency-config.yaml"
 
@@ -1172,6 +1176,7 @@ sweetDependency {
 ```groovy
 sweetDependency {
     enable true
+    debug false
     configFileName 'sweet-dependency-config.yaml'
     useDependencyResolutionManagement true
     enableDependenciesAutowireLog true

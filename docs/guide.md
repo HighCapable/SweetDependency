@@ -1220,6 +1220,11 @@ sweetDependency {
     // Enable SweetDependency, set to false will disable all functions
     isEnable = true
 
+    // Whether to enable debug mode
+    // Not enabled by default,
+    // if enabled, detailed dependencies search information will be output during autowiring
+    isDebug = false
+
     // SweetDependency configuration file name
     configFileName = "sweet-dependency-config.yaml"
 
@@ -1245,6 +1250,7 @@ sweetDependency {
 ```groovy
 sweetDependency {
     enable true
+    debug false
     configFileName 'sweet-dependency-config.yaml'
     useDependencyResolutionManagement true
     enableDependenciesAutowireLog true
