@@ -31,6 +31,9 @@
 
 如果你的项目依然在使用 `buildscript` 的方式进行管理，请迁移到新方式，否则会发生错误。
 
+如果你的项目不能使用 `dependencyResolutionManagement` 进行管理，你可以参考此页面最下方的 [自定义选项](#自定义选项)
+通过配置 `isUseDependencyResolutionManagement = false` 来使用传统的库依赖管理方式。
+
 ## 快速开始
 
 首先，打开你根项目的 `settings.gradle` 或 `settings.gradle.kts`。
@@ -1149,6 +1152,11 @@ sweetDependency {
     // SweetDependency 配置文件名称
     configFileName = "sweet-dependency-config.yaml"
 
+    // 是否使用 Settings.dependencyResolutionManagement 管理库依赖
+    // 此功能默认启用，如果你的项目必须存在自定义的 "repositories" 方法块，请关闭此功能
+    // 注意：关闭后配置文件中的 "repositories-mode" 选项将不再有效
+    isUseDependencyResolutionManagement = true
+
     // 是否启用依赖自动装配日志
     // 此功能默认启用，会在当前根项目 (Root Project) 的 ".gradle/sweet-dependency" 目录下创建日志文件
     isEnableDependenciesAutowireLog = true
@@ -1165,6 +1173,7 @@ sweetDependency {
 sweetDependency {
     enable true
     configFileName 'sweet-dependency-config.yaml'
+    useDependencyResolutionManagement true
     enableDependenciesAutowireLog true
     enableVerboseMode true
 }

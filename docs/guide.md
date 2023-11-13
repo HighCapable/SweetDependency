@@ -32,6 +32,10 @@ Note that `SweetDependency` supports at least Gradle `7.x.x` and is managed usin
 
 If your project is still managed using the `buildscript` method, please migrate to the new method, otherwise errors will occur.
 
+If your project cannot be managed using `dependencyResolutionManagement`, you can refer to the [Custom Preferences](#custom-preferences)
+at the bottom of this page,
+use traditional library dependency management by configuring `isUseDependencyResolutionManagement = false`.
+
 ## Quick Start
 
 First, open `settings.gradle` or `settings.gradle.kts` of your root project.
@@ -1219,6 +1223,12 @@ sweetDependency {
     // SweetDependency configuration file name
     configFileName = "sweet-dependency-config.yaml"
 
+    // Whether to use Settings.dependencyResolutionManagement to manage library dependencies
+    // This function is enabled by default,
+    // if your project must have a custom "repositories" method block, please disable this function
+    // Note: The "repositories-mode" option in the configuration file will no longer be effective after disabled
+    isUseDependencyResolutionManagement = true
+
     // Whether to enable dependency autowiring logging
     // This function is enabled by default and will create a log file in the ".gradle/sweet-dependency" directory of the current root project
     isEnableDependenciesAutowireLog = true
@@ -1236,6 +1246,7 @@ sweetDependency {
 sweetDependency {
     enable true
     configFileName 'sweet-dependency-config.yaml'
+    useDependencyResolutionManagement true
     enableDependenciesAutowireLog true
     enableVerboseMode true
 }
