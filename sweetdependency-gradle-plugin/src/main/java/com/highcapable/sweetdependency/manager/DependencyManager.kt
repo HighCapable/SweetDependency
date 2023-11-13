@@ -253,7 +253,19 @@ internal object DependencyManager {
             forEachIndexed { index, entry ->
                 val currentVersionFilterExclusionList = versionFilterExclusionList.depends(currentVersion)
                 val availableVersions = mutableListOf<DependencyVersion>()
-                poms.add(MavenParser.acquire(dependencyName, entry, currentVersion))
+                poms.add(MavenParser.acquire(dependencyName, entry, currentVersion).also {
+                    if (!SweetDependencyConfigs.configs.isDebug) return@also
+                    val isNotFound = it.versions.isEmpty()
+                    logDoneOrWarn("$positionTagName > OBTAIN (${index + 1}/$size) ${dependencyName.description}", isNotFound)
+                    logDoneOrWarn(
+                        """
+                          - Repository (${entry.nodeName}): ${it.url}
+                          - Last Updated: ${it.lastUpdated}
+                          - Versions: ${it.versions}
+                          - Adopted Versions: ${currentVersionFilterExclusionList.filter(it.versions)}
+                        """.trimIndent(), isNotFound, noTag = true
+                    )
+                })
                 if (index == lastIndex) poms.noEmpty()
                     ?.sortedByDescending { it.lastUpdated }
                     ?.let { if (it.all { e -> e.lastUpdated <= 0L }) it.sortedByDescending { e -> e.versions.size } else it }
@@ -333,4 +345,13 @@ internal object DependencyManager {
         }
         else -> SLog.info("$positionTagName > UP-TO-DATE ${dependencyName.description} version $currentVersion", SLog.DONE)
     }
+
+    /**
+     * 打印完成或警告 Log
+     * @param msg 消息内容
+     * @param isWarn 是否为警告模式 - 默认否
+     * @param noTag 无标签 - 默认否
+     */
+    private fun logDoneOrWarn(msg: String, isWarn: Boolean = false, noTag: Boolean = false) =
+        if (isWarn) SLog.warn(msg, noTag = noTag) else SLog.info(msg, SLog.DONE, noTag = noTag)
 }

@@ -48,6 +48,14 @@ open class SweetDependencyConfigureExtension internal constructor() {
         @JvmName("enable") set
 
     /**
+     * 是否启用调试模式
+     *
+     * 默认不启用 - 启用后将在自动装配时输出详细的依赖搜索信息
+     */
+    var isDebug = false
+        @JvmName("debug") set
+
+    /**
      * [SweetDependency] 配置文件名称
      *
      * 默认为 [ISweetDependencyConfigs.DEFAULT_CONFIG_FILE_NAME]
@@ -87,12 +95,14 @@ open class SweetDependencyConfigureExtension internal constructor() {
      */
     internal fun build(): ISweetDependencyConfigs {
         val currentEnable = isEnable
+        val currentDebug = isDebug
         val currentConfigFilePath = Environment.resourcesDir(configFileName).absolutePath
         val currentUseDependencyResolutionManagement = isUseDependencyResolutionManagement
         val currentEnableDependenciesAutowireLog = isEnableDependenciesAutowireLog
         val currentEnableVerboseMode = isEnableVerboseMode
         return object : ISweetDependencyConfigs {
             override val isEnable get() = currentEnable
+            override val isDebug get() = currentDebug
             override val configFilePath get() = currentConfigFilePath
             override val isUseDependencyResolutionManagement get() = currentUseDependencyResolutionManagement
             override val isEnableDependenciesAutowireLog get() = currentEnableDependenciesAutowireLog

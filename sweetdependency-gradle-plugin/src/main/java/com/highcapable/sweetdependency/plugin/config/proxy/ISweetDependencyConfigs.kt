@@ -42,6 +42,9 @@ internal interface ISweetDependencyConfigs {
     /** 是否启用插件 */
     val isEnable: Boolean
 
+    /** 是否启用调试模式 */
+    val isDebug: Boolean
+
     /** [SweetDependency] 的配置文件路径 */
     val configFilePath: String
 

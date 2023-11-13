@@ -57,26 +57,32 @@ internal object MavenParser {
         val isIncludeScope = repo.isIncludeScope(dependencyName.type == DependencyName.Type.PLUGIN)
         /** 离线模式下不会自动装配、更新在线依赖 */
         if (isIncludeScope && GradleHelper.isOfflineMode) return MavenMetadata()
+        var currentUrl: String
         return when {
-            repo.url.isNotBlank() -> "$headerUrlOrPath$METADATA_FILE_NAME".executeUrlBody(repo.credentials.username, repo.credentials.password)
-            repo.path.isNotBlank() -> "$headerUrlOrPath$METADATA_LOCAL_FILE_NAME".executeFileBody()
+            repo.url.isNotBlank() -> "$headerUrlOrPath$METADATA_FILE_NAME"
+                .apply { currentUrl = this }
+                .executeUrlBody(repo.credentials.username, repo.credentials.password)
+            repo.path.isNotBlank() -> "$headerUrlOrPath$METADATA_LOCAL_FILE_NAME"
+                .apply { currentUrl = this }
+                .executeFileBody()
             else -> SError.make("Could not resolve this repository \"${repo.nodeName}\"")
-        }.trim().toMetadata(currentVersion)
+        }.trim().toMetadata(currentUrl, currentVersion)
     }
 
     /**
      * 解析 [METADATA_FILE_NAME]、[METADATA_LOCAL_FILE_NAME] 内容到 [MavenMetadata] 实体
+     * @param url 当前依赖获取 URL
      * @param currentVersion 当前依赖版本
      * @return [MavenMetadata]
      */
-    private fun String.toMetadata(currentVersion: DependencyVersion) = runCatching {
-        if (!(contains("<metadata ") || contains("<metadata>")) || !endsWith("</metadata>")) return@runCatching MavenMetadata()
+    private fun String.toMetadata(url: String, currentVersion: DependencyVersion) = runCatching {
+        if (!(contains("<metadata ") || contains("<metadata>")) || !endsWith("</metadata>")) return@runCatching MavenMetadata(url)
         DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(InputSource(StringReader(this))).let { document ->
             val lastUpdated = document.getElementsByTagName("lastUpdated").item(0)?.textContent?.toLongOrNull() ?: 0L
             val versionNodeList = document.getElementsByTagName("version")
             val versions = mutableListOf<DependencyVersion>()
             for (i in 0..versionNodeList.length) versionNodeList.item(i)?.textContent?.also { versions.add(currentVersion.clone(it)) }
-            MavenMetadata(versions.noEmpty()?.reversed()?.toMutableList() ?: mutableListOf(), lastUpdated)
+            MavenMetadata(url, versions.noEmpty()?.reversed()?.toMutableList() ?: mutableListOf(), lastUpdated)
         }
-    }.getOrNull() ?: MavenMetadata()
+    }.getOrNull() ?: MavenMetadata(url)
 }

@@ -83,6 +83,8 @@ internal object RuntimeDebugTransaction {
             "Gradle Version" value GradleHelper.version,
             "Plugin Version" value SweetDependency.VERSION,
             "Plugin Configuration" to mapOf(
+                "isEnable" value configs.isEnable,
+                "isDebug" value configs.isDebug,
                 "configFileName" with "(path) ${configs.configFilePath}" to mapOf(
                     "preferences" to mapOf(
                         "autowire-on-sync-mode" value preferences.autowireOnSyncMode,

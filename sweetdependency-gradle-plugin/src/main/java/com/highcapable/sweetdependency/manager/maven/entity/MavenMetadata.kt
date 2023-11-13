@@ -25,10 +25,12 @@ import com.highcapable.sweetdependency.gradle.entity.DependencyVersion
 
 /**
  * Maven Metadata 实体
+ * @param url 依赖获取 URL
  * @param versions 版本数组
  * @param lastUpdated 最后更新时间戳
  */
 internal data class MavenMetadata(
+    internal var url: String = "",
     internal var versions: MutableList<DependencyVersion> = mutableListOf(),
     internal var lastUpdated: Long = 0L
 )
