@@ -22,6 +22,7 @@
 package com.highcapable.sweetdependency.plugin.config.proxy
 
 import com.highcapable.sweetdependency.SweetDependency
+import org.gradle.api.initialization.Settings
 
 /**
  * [SweetDependency] 配置类接口类
@@ -43,6 +44,9 @@ internal interface ISweetDependencyConfigs {
 
     /** [SweetDependency] 的配置文件路径 */
     val configFilePath: String
+
+    /** 是否使用 [Settings.dependencyResolutionManagement] 管理库依赖 */
+    val isUseDependencyResolutionManagement: Boolean
 
     /** 是否启用依赖自动装配日志 */
     val isEnableDependenciesAutowireLog: Boolean

@@ -81,8 +81,10 @@ internal class SweetDependencyExtensionImpl : BaseExtensionImpl() {
     }
 
     override fun onTransaction(transaction: ProjectTransaction) {
-        if (transaction.isRoot) DependencyManager.resolve(transaction.current)
-        transaction.evaluation { project, isRoot -> if (isRoot) DependencyManager.deploy(project) }
+        if (transaction.isRoot) {
+            RepositoryManager.apply(transaction.current)
+            DependencyManager.resolve(transaction.current)
+        }; transaction.evaluation { project, isRoot -> if (isRoot) DependencyManager.deploy(project) }
     }
 
     /**

@@ -23,6 +23,7 @@ package com.highcapable.sweetdependency.manager
 
 import com.highcapable.sweetdependency.document.PreferencesDocument
 import com.highcapable.sweetdependency.document.RepositoryDocument
+import com.highcapable.sweetdependency.document.factory.RepositoryList
 import com.highcapable.sweetdependency.exception.SweetDependencyUnresolvedException
 import com.highcapable.sweetdependency.gradle.helper.GradleHelper
 import com.highcapable.sweetdependency.manager.const.AdditionalRepositories
@@ -33,6 +34,7 @@ import com.highcapable.sweetdependency.utils.debug.SLog
 import com.highcapable.sweetdependency.utils.noBlank
 import com.highcapable.sweetdependency.utils.noEmpty
 import com.highcapable.sweetdependency.utils.toFile
+import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.artifacts.repositories.AuthenticationSupported
@@ -46,32 +48,27 @@ import org.gradle.api.initialization.resolve.RepositoriesMode as GradleRepositor
  */
 internal object RepositoryManager {
 
+    /** 当前存储库数组 */
+    private var repositories: RepositoryList = mutableListOf()
+
+    /**
+     * 当前是否使用 [Settings.dependencyResolutionManagement] 管理库依赖
+     * @return [Boolean]
+     */
+    private val isUseDependencyResolutionManagement get() = SweetDependencyConfigs.configs.isUseDependencyResolutionManagement
+
     /**
      * 生成并应用存储库数组
      * @param settings 当前设置
      */
     internal fun generateAndApply(settings: Settings) {
-        val repositories = SweetDependencyConfigs.document.repositories()
+        repositories = SweetDependencyConfigs.document.repositories()
         Repositories.generate(repositories)
-        /**
-         * 应用存储库数组到 Gradle
-         * @param isPlugins 当前应用类型是否为插件依赖
-         */
-        fun RepositoryHandler.apply(isPlugins: Boolean) = repositories.forEach {
-            if (it.isIncludeScope(isPlugins)) when (it.nodeType) {
-                RepositoryDocument.RepositoryType.GOOGLE -> google { applyToArtifact(it) }
-                RepositoryDocument.RepositoryType.MAVEN_CENTRAL -> mavenCentral { applyToArtifact(it) }
-                RepositoryDocument.RepositoryType.MAVEN_LOCAL -> mavenLocal { applyToArtifact(it) }
-                RepositoryDocument.RepositoryType.MAVEN -> maven { applyToArtifact(it) }
-                RepositoryDocument.RepositoryType.GRADLE_PLUGIN_PORTAL -> gradlePluginPortal { applyToArtifact(it) }
-                else -> {}
-            }
-        }
         settings.pluginManagement {
             this.repositories.clear()
             this.repositories.apply(isPlugins = true)
         }
-        settings.dependencyResolutionManagement {
+        if (isUseDependencyResolutionManagement) settings.dependencyResolutionManagement {
             this.repositoriesMode.set(when (SweetDependencyConfigs.document.preferences().repositoriesMode) {
                 PreferencesDocument.RepositoriesMode.PREFER_PROJECT -> GradleRepositoriesMode.PREFER_PROJECT
                 PreferencesDocument.RepositoriesMode.PREFER_SETTINGS -> GradleRepositoriesMode.PREFER_SETTINGS
@@ -79,6 +76,33 @@ internal object RepositoryManager {
             })
             this.repositories.clear()
             this.repositories.apply(isPlugins = false)
+        }
+    }
+
+    /**
+     * 应用存储库数组
+     * @param rootProject 当前根项目
+     */
+    internal fun apply(rootProject: Project) {
+        if (!isUseDependencyResolutionManagement)
+            rootProject.allprojects {
+                this.repositories.clear()
+                this.repositories.apply(isPlugins = false)
+            }
+    }
+
+    /**
+     * 应用存储库数组到 Gradle
+     * @param isPlugins 当前应用类型是否为插件依赖
+     */
+    private fun RepositoryHandler.apply(isPlugins: Boolean) = repositories.forEach {
+        if (it.isIncludeScope(isPlugins)) when (it.nodeType) {
+            RepositoryDocument.RepositoryType.GOOGLE -> google { applyToArtifact(it) }
+            RepositoryDocument.RepositoryType.MAVEN_CENTRAL -> mavenCentral { applyToArtifact(it) }
+            RepositoryDocument.RepositoryType.MAVEN_LOCAL -> mavenLocal { applyToArtifact(it) }
+            RepositoryDocument.RepositoryType.MAVEN -> maven { applyToArtifact(it) }
+            RepositoryDocument.RepositoryType.GRADLE_PLUGIN_PORTAL -> gradlePluginPortal { applyToArtifact(it) }
+            else -> {}
         }
     }
 

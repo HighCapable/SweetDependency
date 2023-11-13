@@ -26,6 +26,7 @@ package com.highcapable.sweetdependency.plugin.extension.dsl.configure
 import com.highcapable.sweetdependency.SweetDependency
 import com.highcapable.sweetdependency.environment.Environment
 import com.highcapable.sweetdependency.plugin.config.proxy.ISweetDependencyConfigs
+import org.gradle.api.initialization.Settings
 
 /**
  * [SweetDependency] 配置方法体实现类
@@ -55,6 +56,16 @@ open class SweetDependencyConfigureExtension internal constructor() {
         @JvmName("configFileName") set
 
     /**
+     * 是否使用 [Settings.dependencyResolutionManagement] 管理库依赖
+     *
+     * 此功能默认启用 - 如果你的项目必须存在自定义的 "repositories" 方法块 - 请关闭此功能
+     *
+     * - 注意：关闭后配置文件中的 "repositories-mode" 选项将不再有效
+     */
+    var isUseDependencyResolutionManagement = true
+        @JvmName("useDependencyResolutionManagement") set
+
+    /**
      * 是否启用依赖自动装配日志
      *
      * 此功能默认启用 - 会在当前根项目 (Root Project) 的 build 目录下创建日志文件
@@ -77,11 +88,13 @@ open class SweetDependencyConfigureExtension internal constructor() {
     internal fun build(): ISweetDependencyConfigs {
         val currentEnable = isEnable
         val currentConfigFilePath = Environment.resourcesDir(configFileName).absolutePath
+        val currentUseDependencyResolutionManagement = isUseDependencyResolutionManagement
         val currentEnableDependenciesAutowireLog = isEnableDependenciesAutowireLog
         val currentEnableVerboseMode = isEnableVerboseMode
         return object : ISweetDependencyConfigs {
             override val isEnable get() = currentEnable
             override val configFilePath get() = currentConfigFilePath
+            override val isUseDependencyResolutionManagement get() = currentUseDependencyResolutionManagement
             override val isEnableDependenciesAutowireLog get() = currentEnableDependenciesAutowireLog
             override val isEnableVerboseMode get() = currentEnableVerboseMode
         }
