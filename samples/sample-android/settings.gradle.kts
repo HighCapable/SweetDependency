@@ -8,7 +8,7 @@ pluginManagement {
 plugins {
     // Import the SweetDependency plugin here
     // 在这里引入 SweetDependency 插件
-    id("com.highcapable.sweetdependency") version "1.0.3"
+    id("com.highcapable.sweetdependency") version "1.0.4"
 }
 sweetDependency {
     configFileName = "sweet-dependency-config.yaml"

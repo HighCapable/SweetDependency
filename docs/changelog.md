@@ -30,3 +30,10 @@
 - Change the configuration dependency `autowire(...)` in Kotlin Multiplatform to `sweet.autowire(...)`
 - Generated code is marked with `@Nonnull` to make it recognized as a non-null return type in Kotlin DSL scripts
 - Some other functional improvements
+
+## 1.0.4 | 2023.11.14
+
+- Added `isUseDependencyResolutionManagement` option, enabled by default, now you can choose whether to allow plugins to
+  use `dependencyResolutionManagement` to configure library dependencies
+- Added `isDebug` option, not enabled by default, you can enable this option to output detailed dependency search information during autowiring
+- Some other functional improvements

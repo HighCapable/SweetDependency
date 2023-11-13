@@ -27,3 +27,9 @@
 - 更换 Kotlin Multiplatform 中的配置依赖 `autowire(...)` 写法为 `sweet.autowire(...)`
 - 生成的代码使用 `@Nonnull` 标记以使其能够在 Kotlin DSL 脚本中识别为非空返回值类型
 - 一些其它功能性的改进
+
+## 1.0.4 | 2023.11.14
+
+- 新增 `isUseDependencyResolutionManagement` 选项，默认启用，现在你可以选择是否允许插件使用 `dependencyResolutionManagement` 配置库依赖
+- 新增 `isDebug` 选项，默认不启用，你可以启用此选项来在自动装配时输出详细的依赖搜索信息
+- 一些其它功能性的改进
