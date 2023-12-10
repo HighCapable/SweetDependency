@@ -4,11 +4,11 @@
 [![GitHub release](https://img.shields.io/github/v/release/HighCapable/SweetDependency?display_name=release&logo=github&color=green)](https://github.com/HighCapable/SweetDependency/releases)
 [![Telegram](https://img.shields.io/badge/discussion-Telegram-blue.svg?logo=telegram)](https://t.me/HighCapable_Dev)
 
-<img src="https://github.com/HighCapable/SweetDependency/blob/master/img-src/icon.png?raw=true" width = "100" height = "100" alt="LOGO"/>
+<img src="img-src/icon.png" width = "100" height = "100" alt="LOGO"/>
 
 An easy autowire and manage dependencies Gradle plugin.
 
-English | [简体中文](https://github.com/HighCapable/SweetDependency/blob/master/README-zh-CN.md)
+English | [简体中文](README-zh-CN.md)
 
 | <img src="https://github.com/HighCapable/.github/blob/main/img-src/logo.jpg?raw=true" width = "30" height = "30" alt="LOGO"/> | [HighCapable](https://github.com/HighCapable) |
 |-------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
@@ -59,11 +59,11 @@ Some functions will be gradually improved following the needs of users.
 
 ## Get Started
 
-- [Click here](https://github.com/HighCapable/SweetDependency/blob/master/docs/guide.md) to view the documentation
+- [Click here](docs/guide.md) to view the documentation
 
 ## Changelog
 
-- [Click here](https://github.com/HighCapable/SweetDependency/blob/master/docs/changelog.md) to view the historical changelog
+- [Click here](docs/changelog.md) to view the historical changelog
 
 ## Promotion
 
