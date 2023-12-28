@@ -50,5 +50,5 @@ object SweetDependency {
     const val VERSION = SweetDependencyProperties.PROJECT_VERSION
 
     /** 项目地址 */
-    const val PROJECT_URL = SweetDependencyProperties.PROJECT_URL
+    const val PROJECT_URL = SweetDependencyProperties.POM_URL
 }
