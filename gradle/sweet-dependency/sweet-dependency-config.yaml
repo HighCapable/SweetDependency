@@ -12,13 +12,13 @@ repositories:
 plugins:
   org.jetbrains.kotlin.jvm:
     alias: kotlin-jvm
-    version: 1.9.21
+    version: 1.9.22
   org.jetbrains.kotlin.plugin.serialization:
     alias: kotlin-serialization
     version-ref: kotlin-jvm
   com.vanniktech.maven.publish:
     alias: maven-publish
-    version: 0.25.3
+    version: 0.26.0
 
 libraries:
   org.snakeyaml:
