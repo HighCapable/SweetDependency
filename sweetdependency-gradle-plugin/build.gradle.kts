@@ -9,14 +9,21 @@ group = property.project.groupName
 version = property.project.version
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withSourcesJar()
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
     sourceSets.all { languageSettings { languageVersion = "2.0" } }
+    compilerOptions {
+        freeCompilerArgs = listOf(
+            "-Xno-param-assertions",
+            "-Xno-call-assertions",
+            "-Xno-receiver-assertions"
+        )
+    }
 }
 
 dependencies {
