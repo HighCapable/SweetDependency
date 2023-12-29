@@ -17,7 +17,10 @@ sweetProperty {
     global {
         sourcesCode {
             className = rootProject.name
-            includeKeys("^project\\..*\$".toRegex())
+            includeKeys(
+                "^project\\..*\$".toRegex(),
+                "^gradle\\..*\$".toRegex()
+            )
             isEnableRestrictedAccess = true
         }
     }
