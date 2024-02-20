@@ -63,7 +63,7 @@ internal class SweetDependencyExtensionImpl : BaseExtensionImpl() {
                 """.trimIndent(), noTag = true
             )
         }
-        if (GradleHelper.version.let { it.startsWith("7.") || !it.startsWith("8.") }) SError.make(
+        if (GradleHelper.version.let { !it.startsWith("7.") && !it.startsWith("8.") }) SError.make(
             "${SweetDependency.TAG} ${SweetDependency.VERSION} " +
                 "does not support Gradle ${GradleHelper.version}, please update Gradle or plugin version"
         )
