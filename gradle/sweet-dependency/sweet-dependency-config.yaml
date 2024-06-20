@@ -12,13 +12,13 @@ repositories:
 plugins:
   org.jetbrains.kotlin.jvm:
     alias: kotlin-jvm
-    version: 1.9.22
+    version: 2.0.0
   org.jetbrains.kotlin.plugin.serialization:
     alias: kotlin-serialization
     version-ref: kotlin-jvm
   com.vanniktech.maven.publish:
     alias: maven-publish
-    version: 0.27.0
+    version: 0.28.0
 
 libraries:
   org.snakeyaml:
@@ -26,7 +26,7 @@ libraries:
       version: 2.7
   com.charleskorn.kaml:
     kaml:
-      version: 0.57.0
+      version: 0.60.0
   com.squareup.okhttp3:
     okhttp:
       version: 4.12.0
