@@ -9,7 +9,7 @@
 
 一个轻松自动装配和管理依赖的 Gradle 插件。
 
-[English](README.md) | 简体中文
+[English](README.md) | 简体中文 | [日本語](README-ja-JP.md)
 
 | <img src="https://github.com/HighCapable/.github/blob/main/img-src/logo.jpg?raw=true" width = "30" height = "30" alt="LOGO"/> | [HighCapable](https://github.com/HighCapable) |
 |-------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
