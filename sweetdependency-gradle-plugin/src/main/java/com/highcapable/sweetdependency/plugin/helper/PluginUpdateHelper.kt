@@ -35,8 +35,8 @@ import javax.xml.parsers.DocumentBuilderFactory
  */
 internal object PluginUpdateHelper {
 
-    /** OSS Release URL 地址 */
-    private const val SONATYPE_OSS_RELEASES_URL = "https://s01.oss.sonatype.org/content/repositories/releases"
+    /** Maven Central Release URL 地址 */
+    private const val SONATYPE_OSS_RELEASES_URL = "https://repo1.maven.org/maven2"
 
     /** 依赖配置文件名 */
     private const val METADATA_FILE_NAME = "maven-metadata.xml"
