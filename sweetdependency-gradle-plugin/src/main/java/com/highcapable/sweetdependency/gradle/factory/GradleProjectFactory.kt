@@ -144,7 +144,7 @@ internal fun Project.waitForPluginAdded(id: String, action: (Plugin<*>) -> Unit)
  */
 internal inline fun <reified T : BaseTask> Project.createTask(group: String, name: String) = runCatching {
     T::class.java.getConstructor().newInstance().also { instance ->
-        task(name) {
+        tasks.register(name) {
             this.group = group
             outputs.upToDateWhen { false }
             doFirst { instance.onTransaction() }
