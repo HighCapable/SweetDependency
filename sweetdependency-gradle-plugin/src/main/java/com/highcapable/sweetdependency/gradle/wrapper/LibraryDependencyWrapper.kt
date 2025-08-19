@@ -68,6 +68,7 @@ internal data class LibraryDependencyWrapper internal constructor(private val in
      * - [type] 需要为 [LibraryDependencyType.PROJECT] 否则始终为 null
      * @return [Project] or null
      */
+    // FIXME: https://stackoverflow.com/questions/79619019/how-replace-deprecated-getdependencyproject-in-a-backwards-compatible-way
     val project get() = runCatching { (instance as? ProjectDependency?)?.dependencyProject }.getOrNull()
 
     /**
