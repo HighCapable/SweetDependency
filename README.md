@@ -12,9 +12,21 @@ An easy autowire and manage dependencies Gradle plugin.
 English | [简体中文](README-zh-CN.md)
 
 | <img src="https://github.com/HighCapable/.github/blob/main/img-src/logo.jpg?raw=true" width = "30" height = "30" alt="LOGO"/> | [HighCapable](https://github.com/HighCapable) |
-|-------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
 
 This project belongs to the above-mentioned organization, **click the link above to follow this organization** and discover more good projects.
+
+## Notice About Project Maintenance Status
+
+Due to personal time and energy constraints, and considering that Gradle now officially provides a more mature dependency management solution through Version Catalog, this project will no longer receive active maintenance.
+
+I've given this considerable thought. Gradle's Version Catalog has evolved into a well-established solution with comprehensive IDE support and code navigation capabilities, eliminating the need to manually write TOML configuration files. At this stage, whether dependencies are configured in YAML format has become less significant, especially given that Version Catalog benefits from third-party plugins offering one-click version updates, making it quite convenient to work with. When viewed from this perspective, `SweetDependency`'s advantages have become less distinctive. I treasure the three years this project has accompanied me – it successfully addressed my critical needs for project version management and helped other developers facing similar challenges.
+
+This project carries some technical debt and early design decisions that I now recognize as immature. The codebase is provided as-is for learning and reference purposes only, and should not be used in production environments.
+
+One regret I'd like to mention: the IDEA plugin wasn't completed due to various circumstances, and upon reflection, maintaining it would likely have proven challenging. I prefer not to invest my energy in a version management plugin that wouldn't deliver practical value to my work.
+
+`SweetDependency` will not be adapted for Gradle 9.0.0 and later versions. This is where the journey ends. However, this repository will remain accessible rather than being archived – I'd like to keep it here. If you're interested in taking over this project and continuing its development, you're welcome to fork this repository and document this in your README. Thank you for your support.
 
 ## What's this
 
@@ -29,7 +41,7 @@ which is relatively readable, and the configuration process is simple and easy t
 
 Not just Android projects, any project that uses Gradle as a build tool will work.
 
-Currently there is only Gradle plugin, IDEA related plugins are still under development,
+Currently there is only Gradle plugin, ~~IDEA related plugins are still under development~~,
 support for syntax checking of configuration file and displaying configuration file in the Android project's Gradle files list is expected.
 
 Gradle `7.x.x` and `8.x.x` are supported, other versions have not been tested and are not recommended.
