@@ -26,7 +26,9 @@ This project carries some technical debt and early design decisions that I now r
 
 One regret I'd like to mention: the IDEA plugin wasn't completed due to various circumstances, and upon reflection, maintaining it would likely have proven challenging. I prefer not to invest my energy in a version management plugin that wouldn't deliver practical value to my work.
 
-`SweetDependency` will not be adapted for Gradle 9.0.0 and later versions. This is where the journey ends. However, this repository will remain accessible rather than being archived – I'd like to keep it here. If you're interested in taking over this project and continuing its development, you're welcome to fork this repository and document this in your README. Thank you for your support.
+`SweetDependency` will not be adapted for Gradle 9.0.0 and later versions. This is where the journey ends. ~~However, this repository will remain accessible rather than being archived – I'd like to keep it here. If you're interested in taking over this project and continuing its development, you're welcome to fork this repository and document this in your README. Thank you for your support.~~
+
+2026-05-11 Update: I've decided to archive the repository after all. While this library has brought me many wonderful memories, I really don't want to deal with the complexities of Gradle dependency management anymore. Let the official solution take care of it. This project should serve as a historical artifact, quietly residing in its place in history.
 
 ## What's this
 
